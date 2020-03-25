@@ -3,28 +3,29 @@
 # corrected bug found by XDA member droidvark
 # added ssh keys for git
 
-echo "$@"
-
 cd ~
 
 if [ $# -eq 0 ]; then
-    echo "usage: $0 <version> [apps] [nomodule]"
+    echo -e "usage: $0 <version> [apps] [nomodule] [wiz]"
     exit -1
 fi
-VERSION="$1"
 
+VERSION="$1"
 EXPAPPS=0
 NOMODULE=0
 WIZ=0
+
 for arg in "$@"; do
     if [ "$arg" == "apps" ]; then EXPAPPS=1; fi
     if [ "$arg" == "nomodule" ]; then NOMODULE=1; fi
     if [ "$arg" == "wiz" ]; then WIZ=1; fi
+    # we just ignore other args
 done
 
-echo "-- EXPAPPS = $EXPAPPS"
-echo "-- NOMODULE = $NOMODULE"
+echo -e "-- apps = $EXPAPPS, nomodule = $NOMODULE, wiz = $WIZ"
 
+# mount original software system, product, vendor partitions
+echo -e "-- mounting system, product, vendir partitions from $VERSION"
 ~/bin/mt "$VERSION" 2>/dev/null
 
 SWVER=$1
@@ -38,22 +39,16 @@ MODULEZIP=~/Desktop/mm-$NAME.zip
 APNS=apns-conf.xml
 APNS2=apns-conf2.xml
 
-rm -f $MODULE/.expandapps
-if [ $EXPAPPS -eq 1 ]; then
-    echo "-- apps will be expanded during module installation"
-else
-    echo "-- apps will not be expanded during module creation (here)"
-    touch $MODULE/.expandapps
-fi 
 
 #======================================================================
+# prerequisites
 
 echo -e "-- checking prerequisites"
 
 echo -e "\tchecking if module directories exist"
 for i in $MODULE $MODULE/system; do
     if [ ! -d $i ]; then
-        echo "!! directory $i does not exist, exiting"
+        echo -e "!! directory $i does not exist, exiting"
         exit 1
     fi
 done
@@ -61,21 +56,15 @@ done
 echo -e "\tchecking if module files exist"
 for i in $MODULE/install.sh $MODULE/module.prop $MODULE/post-fs-data.sh $MODULE/service.sh $MODULE/system.prop $MODULE/scriptwrapper; do
     if [ ! -f $i ]; then
-        echo "!! file $i does not exist, exiting"
+        echo -e "!! file $i does not exist, exiting"
         exit 1
     fi
 done
 
-OLDVER=$(cat $MODULE/module.prop | grep 'version=' | sed 's/version=//g')
-NEWVER=$(date +'%Y-%m-%d %H:%M')
-
-echo -e "-- oldversion: $OLDVER"
-
-sed -i -e "s/version=$OLDVER/version=$NEWVER/g" $MODULE/module.prop
 
 echo -e "\tchecking if ~/pro/modappsq.tar exists"
 if [ ! -f ~/pro/modappsq.tar ]; then
-    echo "!! ~/pro/modappsq.tar does not exist, exiting"
+    echo -e "!! ~/pro/modappsq.tar does not exist, exiting"
     exit 1
 fi
 
@@ -84,29 +73,52 @@ MTSYSTEM=$SWSRC/output/mnt/system
 MTVENDOR=$SWSRC/output/mnt/vendor
 MTPRODUC=$SWSRC/output/mnt/product
 if [ ! -d $MTSYSTEM ]; then
-    echo "!! directory $MTSYSTEM does not exist, did you create it?"
+    echo -e "!! directory $MTSYSTEM does not exist, did you create it?"
     exit 1
 fi
 if [ ! -d $SRCVENDOR ]; then
-    echo "!! directory $MTVENDOR does not exist, did you create it?"
+    echo -e "!! directory $MTVENDOR does not exist, did you create it?"
     exit 1
 fi
 if [ ! -d $SRCPRODUC ]; then
-    echo "!! directory $MTPRODUC does not exist, did you create it?"
+    echo -e "!! directory $MTPRODUC does not exist, did you create it?"
     exit 1
 fi
 if [ "$(\ls -A $MTSYSTEM | wc -l)" -eq 0 ]; then
-    echo "!! directory $MTSYSTEM is empty, did you mount it?"
+    echo -e "!! directory $MTSYSTEM is empty, did you mount it?"
     exit 1
 fi
 if [ "$(\ls -A $MTVENDOR | wc -l)" -eq 0 ]; then
-    echo "!! directory $MTVENDOR is empty, did you mount it?"
+    echo -e "!! directory $MTVENDOR is empty, did you mount it?"
     exit 1
 fi
 if [ "$(\ls -A $MTPRODUC | wc -l)" -eq 0 ]; then
-    echo "!! directory $MTPRODUC is empty, did you mount it?"
+    echo -e "!! directory $MTPRODUC is empty, did you mount it?"
     exit 1
 fi
+
+#======================================================================
+# version
+
+echo -e "-- generating new version number, populating in module.prop"
+OLDVER=$(cat $MODULE/module.prop | grep 'version=' | sed 's/version=//g')
+NEWVER=$(date +'%Y-%m-%d %H:%M')
+# update the version number in the module.prop file
+sed -i -e "s/version=$OLDVER/version=$NEWVER/g" $MODULE/module.prop
+echo -e "\toldversion: $OLDVER"
+echo -e "\tnewversion: $NEWVER"
+
+#======================================================================
+# make sure we start "clean"
+
+echo -e "-- checking expansion for APKs"
+rm -f $MODULE/.expandapps
+if [ $EXPAPPS -eq 1 ]; then
+    echo -e "\tAPKs will be expanded during module creation"
+else
+    echo -e "\tAPKs will not be expanded during module creation"
+    touch $MODULE/.expandapps
+fi 
 
 #======================================================================
 # cleanup
@@ -116,8 +128,10 @@ SROOT=$MTSYSTEM/system
 VROOT=$MTVENDOR
 PROOT=$MTPRODUC
 
-echo -e "-- removing $MODULEZIP and cleaning up junk files in $MODULE"
+echo "-- cleaning up old files"
+echo -e "\tremoving $MODULEZIP"
 rm -f ~/Desktop/mm-*.zip
+echo -e "\tcleaning up junk files in $MODULE"
 cd $MODULE
 find $MODULE -name '*~' -exec rm -f {} \;
 find $MODULE -name '#*' -exec rm -f {} \;
@@ -130,7 +144,7 @@ optimize_xml () {
     # optimizing all .xml files
     ~/bin/xml-optimize
     NUMFILES=$(find $1 -type f -name '*.xml' | wc -l)
-    echo -e "   optimized $NUMFILES .xml files in $TARGET"
+    echo -e "\toptimized $NUMFILES .xml files in $TARGET"
 }
 
 optimize_json () {
@@ -140,7 +154,7 @@ optimize_json () {
         cp /tmp/opti.json $i
     done
     NUMFILES=$(find $1 -type f -name '*.json' | wc -l)
-    echo -e "   optimized $NUMFILES .json files in $1"
+    echo -e "\toptimized $NUMFILES .json files in $1"
 }
 
 optimize_proto () {
@@ -150,7 +164,7 @@ optimize_proto () {
         cp /tmp/opti.proto $i
     done
     NUMFILES=$(find $1 -type f -name '*.proto' | wc -l)
-    echo -e "   optimized $NUMFILES .proto files in $1"
+    echo -e "\toptimized $NUMFILES .proto files in $1"
 }
 
 optimize_conf () {
@@ -160,7 +174,7 @@ optimize_conf () {
         cp /tmp/opti.conf $i
     done
     NUMFILES=$(find $1 -type f -name '*.conf' | wc -l)
-    echo -e "   optimized $NUMFILES .conf files in $1"
+    echo -e "\toptimized $NUMFILES .conf files in $1"
 }
 
 optimize_rc () {
@@ -170,7 +184,7 @@ optimize_rc () {
         cp /tmp/opti.rc $i
     done
     NUMFILES=$(find $1 -type f -name '*.rc' | wc -l)
-    echo -e "   optimized $NUMFILES .rc files in $1"
+    echo -e "\toptimized $NUMFILES .rc files in $1"
 }
 
 optimize_sh () {
@@ -180,7 +194,7 @@ optimize_sh () {
         cp /tmp/opti.rc $i
     done
     NUMFILES=$(find $1 -type f -name '*.sh' | wc -l)
-    echo -e "   optimized $NUMFILES .sh files in $1"
+    echo -e "\toptimized $NUMFILES .sh files in $1"
 }
 
 optimize_idc () {
@@ -190,7 +204,7 @@ optimize_idc () {
         cp /tmp/opti.idc $i
     done
     NUMFILES=$(find $1 -type f -name '*.idc' | wc -l)
-    echo -e "   optimized $NUMFILES .idc files in $1"
+    echo -e "\toptimized $NUMFILES .idc files in $1"
 }
 
 optimize_ini () {
@@ -200,7 +214,7 @@ optimize_ini () {
         cp /tmp/opti.idc $i
     done
     NUMFILES=$(find $1 -type f -name '*.ini' | wc -l)
-    echo -e "   optimized $NUMFILES .ini files in $1"
+    echo -e "\toptimized $NUMFILES .ini files in $1"
 }
 
 optimize_kcm () {
@@ -210,7 +224,7 @@ optimize_kcm () {
         cp /tmp/opti.kcm $i
     done
     NUMFILES=$(find $1 -type f -name '*.kcm' | wc -l)
-    echo -e "   optimized $NUMFILES .kcm files in $1"
+    echo -e "\toptimized $NUMFILES .kcm files in $1"
 }
 
 optimize_kl () {
@@ -220,7 +234,7 @@ optimize_kl () {
         cp /tmp/opti.kl $i
     done
     NUMFILES=$(find $1 -type f -name '*.kl' | wc -l)
-    echo -e "   optimized $NUMFILES .kl files in $1"
+    echo -e "\toptimized $NUMFILES .kl files in $1"
 }
 
 optimize_sql () {
@@ -230,7 +244,7 @@ optimize_sql () {
         cp /tmp/opti.sql $i
     done
     NUMFILES=$(find $1 -type f -name '*.sql' | wc -l)
-    echo -e "   optimized $NUMFILES .sql files in $1"
+    echo -e "\toptimized $NUMFILES .sql files in $1"
 }
 
 #======================================================================
@@ -238,7 +252,7 @@ optimize_sql () {
 
 copyfiles () {
     CUR=$(pwd)
-    echo -e "   copying $3 files from $1 to $2"
+    echo -e "\tcopying $3 files from $1 to $2"
     cd "$1"
     tar cf - $(find . -type f -name "$3") | (cd "$2"; tar xf -)
     cd $CUR
@@ -248,11 +262,9 @@ copyfiles () {
 # start building module
 
 echo -e "-- building module: $MODULE"
-echo -e "-- creating basic structure in $MODULE/system"
+echo -e "\tremoving $MODULE/system/*"
 # erase the whole system and recreate the basic structure
 rm -rf $MODULE/system/*
-
-exit 0
 
 # /system/build.prop
 # note that this does not work at run time
@@ -262,7 +274,7 @@ exit 0
 PFILE=build.prop
 TARGET=$MODULE/system
 # copy original $PFILE and remove comments and empty lines
-echo "   generating $TARGET/$PFILE from $SROOT/$PFILE"
+echo -e "\tgenerating $TARGET/$PFILE from $SROOT/$PFILE"
 sudo cat $SROOT/$PFILE | grep -v ^# | sed '/^$/d' | sort > $TARGET/$PFILE
 ~/7t/buildprop/gen $TARGET/$PFILE
 cp ~/7t/buildprop/$PFILE $TARGET/$PFILE
@@ -272,9 +284,10 @@ cp ~/7t/buildprop/extrabuildQ $MODULE/system.prop
 #======================================================================
 # start building module
 
+echo -e "-- creating $MODULE/system/product"
 mkdir -p $MODULE/system/product
+echo -e "-- creating $MODULE/system/vendor"
 mkdir -p $MODULE/system/vendor
-
 
 #======================================================================
 # executables for /system/xbin
@@ -288,7 +301,7 @@ for i in androidauto apackages appc bash busybox cmp compall copyflash diff dope
     chmod 755 $TARGET/$i
 done
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in system/xbin"
+echo -e "\tcreated $NUMFILES files in system/xbin"
 
 # and we also remove a few by making them empty files
 for i in antradio_app pnx; do
@@ -302,13 +315,13 @@ done
 
 SUB=system/bin
 TARGET=$MODULE/$SUB
-echo -e "-- generating $SUB (creating empty files)"
+echo -e "-- generating $SUB (creating empty executables)"
 mkdir -p $TARGET
 for i in ATFWD-daemon OPDiagdataCopy OPDiagnoseservice OPNetlinkService asserttip atrace auditctl auto_brightness_log.sh bootstat br_app_data_service bugreport bugreportz caffe clatd debuggerd diag_socket_log engineer_shell.sh filebuilderd fsck_msdos heapprofd incident incident_helper incidentd iorapd migrate_legacy_obb_data.sh mmi_diag move_time_data.sh move_widevine_data.sh move_wifi_data.sh notify_traceur.sh newfs_msdos ntfs-3g ntfsfix oemlogkit opposensortest perfetto perfservice qvrservicetest qvrservicetest64 recovery-persist recovery-refresh rtspclient rtspserver schedtest sgdisk sigma_miracasthalservice simpleperf simpleperf_app_runner sload_f2fs statsd tombstoned traced traced_probes uiautomator update_engine update_engine_client vendor_cmd_tool viewcompiler vl53l1_iotest vr wfdservice wfdvndservice; do
     touch $TARGET/$i
 done
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 
 #======================================================================
 # /system/framework
@@ -323,7 +336,7 @@ cp ~/7t/framework/com.google.vr.platform.jar $TARGET
 cp ~/7t/framework/com.google.widevine.software.drm.jar $TARGET
 chmod 644 $TARGET/*
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 
 #======================================================================
 # /system/lib64
@@ -335,7 +348,7 @@ mkdir -p $TARGET
 cp ~/7t/libs/Q/libsketchology_native.so $TARGET
 chmod 644 $TARGET/*
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 
 #======================================================================
 # /system/media (sound files)
@@ -348,7 +361,7 @@ cd $MODULE/system
 tar xf ~/7t/sounds/modulemedia.tar
 cd $MODULE
 NUMFILES=$(find $TARGET -type f -name '*.ogg' | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 
 
 #======================================================================
@@ -363,12 +376,12 @@ mkdir -p $TARGET
 SUB1=hyphen-data
 TARGET1=$TARGET/$SUB1
 mkdir -p $TARGET1
-echo -e "   populating $SUB/$SUB1 with empty files"
+echo -e "\tpopulating $SUB/$SUB1 with empty files"
 for i in $(\ls $MTSYSTEM/$SUB/$SUB1/ | grep -v -en-gb); do
     touch $TARGET1/$i
 done
 NUMFILES=$(find $TARGET1 -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET1"
+echo -e "\tcreated $NUMFILES files in $TARGET1"
 
 # first copy all keylayout files (only in next step some of them will be 'emptied')
 copyfiles "$SROOT/usr" "$TARGET" '*.kl'
@@ -376,14 +389,14 @@ copyfiles "$SROOT/usr" "$TARGET" '*.kl'
 SUB2=keylayout
 TARGET2=$TARGET/$SUB2
 mkdir -p $TARGET2
-echo -e "   populating $SUB/$SUB2 with empty files"
+echo -e "\tpopulating $SUB/$SUB2 with empty files"
 for i in $(\ls $MTSYSTEM/$SUB/$SUB2/ | grep Vendor_); do
     # remove copied file and replace by empty file
     rm -f $TARGET2/$i
     touch $TARGET2/$i
 done
 NUMFILES=$(find $TARGET2 -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET2"
+echo -e "\tcreated $NUMFILES files in $TARGET2"
 
 mkdir -p $TARGET/share
 mkdir -p $TARGET/share/zoneinfo
@@ -401,7 +414,7 @@ emptyapks () {
     TARGET=$MODULE/$1
     echo -e "-- generating $1"
     mkdir -p $TARGET
-    for i in $(echo "$2"); do
+    for i in $(echo -e "$2"); do
         # create the directory in $TARGET
         mkdir -p $TARGET/$i
         # put an "empty" apk file there X.apk where X is the same name as the directory
@@ -492,14 +505,14 @@ cat $SROOT/etc/vold.fstab | grep -v ^# | sed '/^$/d' > $TARGET/vold.fstab
 # init.d and services.d
 mkdir -p $TARGET/init.d
 mkdir -p $TARGET/services.d
-echo -e "   generating init.d and services.d in $SUB"
+echo -e "\tgenerating init.d and services.d in $SUB"
 NUMFILES=$(\ls ~/7t/init.d/LS00* | wc -l)
-echo -e "   copying $NUMFILES scripts to $SUB/init.d"
+echo -e "\tcopying $NUMFILES scripts to $SUB/init.d"
 cp ~/7t/init.d/LS00* $TARGET/init.d/
 cp ~/7t/init.d/googlewiz.sh $TARGET/init.d/
 rm -f $TARGET/init.d/LS00usbfastcharge
 NUMFILES=$(\ls ~/7t/init.d/LS99* | wc -l)
-echo -e "   copying $NUMFILES scripts to $SUB/services.d"
+echo -e "\tcopying $NUMFILES scripts to $SUB/services.d"
 cp ~/7t/init.d/LS99* $TARGET/services.d/
 #not sure why I disabled next line ... I edited the script to absolute minimum hides
 #rm -f $TARGET/services.d/LS99magiskhide
@@ -507,13 +520,13 @@ chmod 755 $TARGET/init.d/*
 chmod 755 $TARGET/services.d/*
 
 # actions
-echo -e "   copying hosts files"
+echo -e "\tcopying hosts files"
 cp ~/7t/hosts/* $TARGET
 chmod 644 $TARGET/hosts*
 cp $TARGET/hosts.medium $TARGET/hosts
 # end actions
 NUMFILES=$(find $TARGET -name 'hosts*' | wc -l)
-echo -e "   created $NUMFILES 'hosts' files in $TARGET"
+echo -e "\tcreated $NUMFILES 'hosts' files in $TARGET"
 
 if [ "$WIZ" == 0 ]; then
     # modified APN file
@@ -522,7 +535,7 @@ if [ "$WIZ" == 0 ]; then
     # that still has the base software and original APN files with the proxy/port for Base and BASE MMS (!!!)
     # so you still need to go in manually in the settings and change the APN
     cp ~/7t/etc/$APNS $TARGET
-    echo -e "   copied simplified $APNS to $TARGET"
+    echo -e "\tcopied simplified $APNS to $TARGET"
 fi
 
 # note that all .rc files were already copied
@@ -530,7 +543,7 @@ fi
 # etc/init
 SUB1=init
 TARGET1=$TARGET/$SUB1
-echo -e "   creating $SUB/$SUB1 and empty .rc files"
+echo -e "\tcreating $SUB/$SUB1 and empty .rc files"
 # actions
 for i in atrace.rc bluetooth-events.rc bootstat.rc caffed.rc com.qualcomm.qti.sigma_miracast\@1.0-service.rc dumpstate.rc engineermode.rc flags_health_check.rc heapprofd.rc incidentd.rc iorapd.rc mdnsd.rc perfetto.rc perfservice.rc recovery-persist.rc recovery-refresh.rc rss_hwm_reset.rc sarahd.rc statsd.rc tombstoned.rc traceur.rc uncrypt.rc update_engine.rc update_verifier.rc wfdservice.rc; do
     rm -f $TARGET1/$i
@@ -538,12 +551,12 @@ for i in atrace.rc bluetooth-events.rc bootstat.rc caffed.rc com.qualcomm.qti.si
 done
 # end actions
 NUMFILES=$(find $TARGET1 -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET1"
+echo -e "\tcreated $NUMFILES files in $TARGET1"
 
 # etc/permissions
 SUB3=permissions
 TARGET3=$TARGET/$SUB3
-echo -e "   generating $SUB/$SUB3"
+echo -e "\tgenerating $SUB/$SUB3"
 mkdir -p $TARGET3
 # we should not delete any .xml files in $TARGET3 (as this has been done from system/etc)
 # actions
@@ -558,28 +571,28 @@ for i in android.test.runner.xml android.test.mock.xml android.test.base.xml; do
     echo '<?xml version="1.0" encoding="utf-8"?><permissions/>' > $TARGET3/$i
 done
 NUMFILES=$(find $TARGET3 -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET3"
+echo -e "\tcreated $NUMFILES files in $TARGET3"
 
 # etc/sysconfig contains "extra" files which we simply copy from ~/7t/etc/
 # etc/sysconfig
 SUB2=sysconfig
 TARGET2=$TARGET/$SUB2
-echo -e "   generating $SUB/$SUB2"
+echo -e "\tgenerating $SUB/$SUB2"
 mkdir -p $TARGET2
 # we should not delete any .xml files in $TARGET2 (as this has been done from system/etc)
 # actions
 cp ~/7t/sysconfig/* $TARGET2
 #end actions
 NUMFILES=$(find $TARGET2 -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET2"
+echo -e "\tcreated $NUMFILES files in $TARGET2"
 
 # optimize txt file in system/etc
-echo "   optimizing $TARGET/qvr/qvrservice_config.txt"
+echo -e "\toptimizing $TARGET/qvr/qvrservice_config.txt"
 mkdir -p $TARGET/qvr
 cat $SROOT/etc/qvr/qvrservice_config.txt  | grep -v ^# | sed '/^$/d' > $TARGET/qvr/qvrservice_config.txt
 
 # add bash
-echo -e "   adding bash shell"
+echo -e "\tadding bash shell"
 mkdir -p $TARGET/bash
 cp ~/7t/bash/bashrc $TARGET/bash
 cp ~/7t/bash/bash_aliases $TARGET/bash
@@ -609,13 +622,13 @@ for i in SlateForOnePlus-Black.ttf SlateForOnePlus-Bold.ttf SlateForOnePlus-Book
     touch $TARGET/$i
 done
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 rm -f $MODULE/system/etc/fonts_slate.xml
 touch $MODULE/system/etc/fonts_slate.xml
 echo '<?xml version="1.0" encoding="utf-8"?>' >> $MODULE/system/etc/fonts_slate.xml
 echo '<familyset version="23">' >> $MODULE/system/etc/fonts_slate.xml
 echo '</familyset>' >> $MODULE/system/etc/fonts_slate.xml
-echo -e "   created $MODULE/system/etc/fonts_slate.xml"
+echo -e "\tcreated $MODULE/system/etc/fonts_slate.xml"
 
 #======================================================================
 # /system/bpm
@@ -627,7 +640,7 @@ echo -e "-- generating $SUB"
 mkdir -p $TARGET
 cp ~/7t/bpm/*.xml $TARGET/
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "   created $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES files in $TARGET"
 
 #======================================================================
 # /vendor
@@ -641,7 +654,7 @@ echo -e "-- generating $SUB"
 # /vendor/build.prop
 PFILE=build.prop
 # copy original build.prop and remove comments and empty lines
-echo "   generating $TARGET/$PFILE from $VROOT/$PFILE"
+echo -e "\tgenerating $TARGET/$PFILE from $VROOT/$PFILE"
 sudo cat $VROOT/$PFILE | grep -v ^# | sed '/^$/d' | sort > $TARGET/$PFILE
 # changing properties
 declare -a props=(
@@ -665,7 +678,7 @@ done
 # /vendor/default.prop
 PFILE=default.prop
 # copy original $PFILE and remove comments and empty lines
-echo "   generating $TARGET/$PFILE from $VROOT/$PFILE"
+echo -e "\tgenerating $TARGET/$PFILE from $VROOT/$PFILE"
 sudo cat $VROOT/$PFILE | grep -v ^# | sed '/^$/d' | sort > $TARGET/$PFILE
 # changing properties
 declare -a props=(
@@ -687,14 +700,14 @@ done
 #=====================
 # /vendor/ueventd.rc
 # this is the only file outside 'etc' subdirectory which is an rc file
-echo "   generating $TARGET/ueventd.rc from $VROOT/ueventd.rc"
+echo -e "\tgenerating $TARGET/ueventd.rc from $VROOT/ueventd.rc"
 sudo cat $VROOT/ueventd.rc | grep -v ^# | sed '/^$/d' | sort > $TARGET/ueventd.rc
 
 #=====================
 # /vendor/radio (.sql files)
 SUB0=radio
 TARGET0=$TARGET/radio
-echo -e "   generating $SUB/$SUB0"
+echo -e "\tgenerating $SUB/$SUB0"
 mkdir -p $TARGET0
 # copy .sql files and optimize them
 copyfiles "$VROOT/radio" "$TARGET0" '*.sql'
@@ -704,7 +717,7 @@ optimize_sql "$TARGET0"
 # /vendor/etc
 SUB1=etc
 TARGET1=$TARGET/$SUB1
-echo -e "   generating $SUB/$SUB1"
+echo -e "\tgenerating $SUB/$SUB1"
 mkdir -p $TARGET1
 
 # copy .xml, .conf, .json, .rc files (those we optimize)
@@ -716,13 +729,13 @@ copyfiles "$VROOT/etc" "$TARGET1" '*.ini'
 
 # 3 special json files which were hand edited
 # the first 2 contain C style comments, the last file has a syntax error in the original SW
-echo "   copying json files from ~7t/json"
+echo -e "\tcopying json files from ~7t/json"
 cp ~/7t/json/ta_config.json $TARGET1/ssg/
 cp ~/7t/json/tz_whitelist.json $TARGET1/ssg/
 cp ~/7t/json/sns_mag_cal_legacy.json $TARGET1/sensors/config/
 
 # there are a few weird XML files that fail validation, fix them
-echo "   fixing $TARGET1/data/dsi_config.xml and $TARGET1/data/netmgr_config.xml"
+echo -e "\tfixing $TARGET1/data/dsi_config.xml and $TARGET1/data/netmgr_config.xml"
 cat $TARGET1/data/dsi_config.xml | tail -n +8 > /tmp/foo.xml
 cp /tmp/foo.xml $TARGET1/data/dsi_config.xml
 cat $TARGET1/data/netmgr_config.xml | tail -n +8 > /tmp/foo.xml
@@ -733,17 +746,17 @@ cp /tmp/foo.xml $TARGET1/data/netmgr_config.xml
 # BandCapability=0 (both 2.4ghz and 5ghz)
 # BandCapability=1 (only 2.4ghz)
 # BandCapability=2 (only 5ghz)
-echo "   changes for WIFI channel bonding"
+echo -e "\tchanges for WIFI channel bonding"
 if [ -f $TARGET1/wifi/WCNSS_qcom_cfg.ini ]; then
     sed -i '/BandCapability=/d;/gChannelBondingMode24GHz=/d;/gChannelBondingMode5GHz=/d;/gForce1x1Exception=/d;s/^END$/gChannelBondingMode24GHz=1\ngChannelBondingMode5GHz=1\ngForce1x1Exception=0\nBandCapability=0\nEND/g' $TARGET1/wifi/WCNSS_qcom_cfg.ini
 fi
 
 # and we want to empty the .rc file which starts dolby as it crashes !
-echo "   emptying $TARGET1/init/vendor.dolby.hardware.dms@1.0-service.rc file (causes crash)"
+echo -e "\temptying $TARGET1/init/vendor.dolby.hardware.dms@1.0-service.rc file (causes crash)"
 rm -f $TARGET1/init/vendor.dolby.hardware.dms\@1.0-service.rc
 touch $TARGET1/init/vendor.dolby.hardware.dms\@1.0-service.rc
 
-echo "   copying mixer paths"
+echo -e "\tcopying mixer paths"
 # copy sound paths (increased volume)
 cp ~/7t/etc/mixer_paths_tavil.xml $TARGET1
 cp ~/7t/etc/mixer_paths_pahu.xml $TARGET1
@@ -767,7 +780,7 @@ cat $VROOT/etc/DxHDCP.cfg | grep -v ^# | sed '/^$/d' | sed 's/EnableLogs=True/En
 # bin
 SUB2=bin
 TARGET2=$TARGET/$SUB2
-echo -e "   generating $SUB/$SUB2"
+echo -e "\tgenerating $SUB/$SUB2"
 mkdir -p $TARGET2
 
 for i in audioflacapp ATFWD-daemon OPNetlinkService host_manager_11ad wfdvndservice wifi_diag wifidisplayhalservice wifilearner wigig_wiburn wigighalsvc wigignpt diag_callback_sample diag_dci_sample qseecom_sample_client secure_ui_sample_client athdiag cnss_diag diag_klog diag_mdlog diag_uart_log ipacm-diag ssr_diag test_diag fmfactorytest fmfactorytestserver ftmtest mm-vidc-omx-test oemnvbkdaemon oem-system-daemon qmi_simple_ril_test dump_sniffer.sh launch_sniffer.sh terminate_sniffer.sh shell_11ad hostapd_cli cnd init.qcom.crashdata.sh; do
@@ -775,7 +788,7 @@ for i in audioflacapp ATFWD-daemon OPNetlinkService host_manager_11ad wfdvndserv
     touch $TARGET2/$i
 done
 NUMFILES=$(find $TARGET2 -type f | wc -l)
-echo -e "   created $NUMFILES files in $SUB/$SUB2"
+echo -e "\tcreated $NUMFILES files in $SUB/$SUB2"
 
 # empty binaries in vendor/bin/hw
 mkdir -p $TARGET2/hw
@@ -784,7 +797,7 @@ for i in android.hardware.atrace\@1.0-service android.hardware.neuralnetworks\@1
     touch $TARGET2/hw/$i
 done
 NUMFILES=$(find $TARGET2/hw -type f | wc -l)
-echo "   emptied $NUMFILES files in $TARGET2/hw"
+echo -e "\temptied $NUMFILES files in $TARGET2/hw"
 
 #=====================
 # optimize
@@ -815,7 +828,7 @@ echo -e "-- generating $SUB"
 
 PFILE=build.prop
 # copy original build.prop and remove comments and empty lines
-echo "   generating $TARGET/$PFILE from $PROOT/$PFILE"
+echo -e "\tgenerating $TARGET/$PFILE from $PROOT/$PFILE"
 sudo cat $PROOT/$PFILE | grep -v ^# | sed '/^$/d' | sort > $TARGET/$PFILE
 # changing properties
 declare -a props=(
@@ -838,7 +851,7 @@ done
 # /product/etc
 SUB1=etc
 TARGET1=$TARGET/$SUB1
-echo -e "   generating $SUB/$SUB1"
+echo -e "\tgenerating $SUB/$SUB1"
 mkdir -p $TARGET1
 
 copyfiles "$PROOT/etc" "$TARGET1" '*.xml'
@@ -849,9 +862,9 @@ copyfiles "$PROOT/etc" "$TARGET1" '*.rc'
 # the file is placed at the top of the module
 rm -f $MODULE/bind-mounts-product-etc
 touch $MODULE/bind-mounts-product-etc
-echo "# do not remove, this file is generated by $0" >> $MODULE/bind-mounts-product-etc
-echo "# bind mounts for .xml, .conf, .rc files inside /product/etc directory" >> $MODULE/bind-mounts-product-etc
-echo -e "   generating file $MODULE/bind-mounts-product-etc"
+echo -e "# do not remove, this file is generated by $0" >> $MODULE/bind-mounts-product-etc
+echo -e "# bind mounts for .xml, .conf, .rc files inside /product/etc directory" >> $MODULE/bind-mounts-product-etc
+echo -e "\tgenerating file $MODULE/bind-mounts-product-etc"
 CUR=$(pwd)
 cd $PROOT/etc
 # remove the pending './'
@@ -865,7 +878,7 @@ if [ "$WIZ" == 0 ]; then
     # next line does not work therefore
     # cp $TARGET1/$APNS $TARGET1/$APNS.orig
     cp ~/7t/etc/$APNS2 $TARGET1/$APNS
-    echo -e "   copied simplified $APNS2 to $TARGET1/$APNS"
+    echo -e "\tcopied simplified $APNS2 to $TARGET1/$APNS"
 fi
 
 # there are 2 XML files which have version="2.0", change this to version="1.0" other wise xml-optimize emtpies the files
@@ -876,9 +889,9 @@ cat $PROOT/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml | s
 # /product/overlay
 SUB2=overlay
 TARGET2=$TARGET/$SUB2
-echo -e "   generating $SUB/$SUB2"
+echo -e "\tgenerating $SUB/$SUB2"
 mkdir -p $TARGET2
-echo -e "   copying 4 overlays into $SUB/$SUB2"
+echo -e "\tcopying 4 overlays into $SUB/$SUB2"
 cp ~/7t/overlay/MyOverlayQSTiles5Col4Rows.apk $TARGET2
 cp ~/7t/overlay/MyOverlayWhiteFingerPrint.apk $TARGET2
 cp ~/7t/overlay/MyOverlayStatusbarIcons.apk $TARGET2
@@ -914,20 +927,20 @@ find $MODULE -type f -name '*.xml' -exec xmlstarlet val {} \; | grep -v '\- vali
 # it contains <pkg-name>:<subdir-in-extra>
 rm -f $MODULE/bind-mounts-extra
 touch $MODULE/bind-mounts-extra
-echo "# do not remove, this file is generated by $0" >> $MODULE/bind-mounts-extra
-echo "# the APKs in the directories will be 1-off installed as 'updates' via LS99installpackages" >> $MODULE/bind-mounts-extra
+echo -e "# do not remove, this file is generated by $0" >> $MODULE/bind-mounts-extra
+echo -e "# the APKs in the directories will be 1-off installed as 'updates' via LS99installpackages" >> $MODULE/bind-mounts-extra
 echo -e "-- generating file $MODULE/bind-mounts-extra"
 
 for i in $(find $MODULE/extra -maxdepth 3 -mindepth 3 | sed "s%$MODULE/extra/%%g"); do
     PKGNAME=$(apkdump $MODULE/extra/$i/*.apk | awk '{print $3}' | sed s%\'%%g | sed 's/name=//g')
-    echo "$PKGNAME:$i" >> $MODULE/bind-mounts-extra
+    echo -e "$PKGNAME:$i" >> $MODULE/bind-mounts-extra
 done
 
 #======================================================================
 
 rm -f $MODULE/googlewiz
 if [ "$WIZ" == 1 ]; then
-    echo "-- we're generating the googlewiz version"
+    echo -e "-- we're generating the googlewiz version"
     touch $MODULE/googlewiz
     rm -rf system/vendor/app/MySystemInfo/
     rm -rf system/vendor/app/MyLauncherKey/
@@ -942,6 +955,7 @@ fi
 
 if [ "$NOMODULE" -eq 1 ]; then
     echo -e "-- not building module ('nomodule' option was given on command line)"
+    echo "-- done"
     exit 0
 fi
 
@@ -951,5 +965,5 @@ sync
 echo -e "-- pushing $MODULEZIP to device"
 adb push $MODULEZIP /sdcard/
 
-
+echo "-- done"
 exit 0
