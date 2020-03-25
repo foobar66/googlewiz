@@ -1,0 +1,1 @@
+find . -type f -exec /system/bin/fgrep -s --with-filename --color "$1" {} \;

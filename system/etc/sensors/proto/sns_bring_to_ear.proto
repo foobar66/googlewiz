@@ -1,0 +1,8 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_bring_to_ear_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_BRING_TO_EAR_MSGID_SNS_BRING_TO_EAR_EVENT = 1024;
+}

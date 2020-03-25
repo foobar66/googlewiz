@@ -1,0 +1,60 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std.proto";
+enum sns_async_com_port_operation_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_ASYNC_COM_PORT_OPERATION_TYPE_READ = 0;
+  SNS_ASYNC_COM_PORT_OPERATION_TYPE_WRITE = 1;
+}
+enum sns_async_com_port_bus_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_ASYNC_COM_PORT_BUS_TYPE_I2C            = 0;
+  SNS_ASYNC_COM_PORT_BUS_TYPE_SPI            = 1;
+  SNS_ASYNC_COM_PORT_BUS_TYPE_I3C_SDR        = 3;
+  SNS_ASYNC_COM_PORT_BUS_TYPE_I3C_HDR_DDR    = 4;
+  SNS_ASYNC_COM_PORT_BUS_TYPE_I3C_I2C_LEGACY = 5;
+}
+enum sns_async_com_port_reg_addr_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_ASYNC_COM_PORT_REG_ADDR_TYPE_8_BIT = 0;
+  SNS_ASYNC_COM_PORT_REG_ADDR_TYPE_16_BIT = 1;
+  SNS_ASYNC_COM_PORT_REG_ADDR_TYPE_32_BIT = 2;
+}
+message sns_async_com_port_config
+{
+  required sns_async_com_port_bus_type bus_type = 1;
+  required fixed32 slave_control = 2;
+  required sns_async_com_port_reg_addr_type reg_addr_type = 3;
+  required fixed32 min_bus_speed_kHz = 4;
+  required fixed32 max_bus_speed_kHz = 5;
+  required fixed32 bus_instance = 6;
+}
+message sns_async_com_port_vector
+{
+  required sns_async_com_port_operation_type operation = 1;
+  required fixed32 reg_addr = 2;
+  optional fixed32 num_bytes = 3;
+  optional bytes buffer = 4;
+}
+message sns_async_com_port_vector_rw
+{
+  required fixed32 num_vectors = 1;
+  repeated sns_async_com_port_vector vectors = 2;
+}
+message sns_async_com_port_error
+{
+  required fixed32 reg_addr = 1;
+  required fixed32 num_bytes = 2;
+  required sns_std_error error_code = 3;
+}
+enum sns_async_com_port_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_ASYNC_COM_PORT_MSGID_SNS_ASYNC_COM_PORT_CONFIG = 512;
+  SNS_ASYNC_COM_PORT_MSGID_SNS_ASYNC_COM_PORT_VECTOR_RW = 1024;
+  SNS_ASYNC_COM_PORT_MSGID_SNS_ASYNC_COM_PORT_ERROR = 1025;
+  SNS_ASYNC_COM_PORT_MSGID_SNS_ASYNC_COM_PORT_REG = 1026;
+}

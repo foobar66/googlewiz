@@ -1,0 +1,35 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_cmc_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_CMC_MSGID_SNS_CMC_EVENT = 772;
+}
+enum sns_cmc_motion_state
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_CMC_STATIONARY  = 1;
+  SNS_CMC_MOVE        = 2;
+  SNS_CMC_FIDDLE      = 3;
+  SNS_CMC_PEDESTRIAN  = 4;
+  SNS_CMC_VEHICLE     = 5;
+  SNS_CMC_WALK        = 6;
+  SNS_CMC_RUN         = 7;
+  SNS_CMC_BIKE        = 8;
+}
+enum sns_cmc_motion_state_event
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_MS_UNKNOWN  = 0;
+  SNS_MS_ACTIVE   = 1;
+  SNS_MS_INACTIVE = 2;
+}
+message sns_cmc_event
+{
+  message data
+  {
+     required sns_cmc_motion_state ms_state = 1;
+     required sns_cmc_motion_state_event ms_state_event = 2  [default = SNS_MS_UNKNOWN];
+  }
+  repeated data events = 1;
+}

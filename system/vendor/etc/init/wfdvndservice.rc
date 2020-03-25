@@ -1,0 +1,4 @@
+service wfdvndservice /vendor/bin/wfdvndservice
+  class main
+  user system
+  group inet

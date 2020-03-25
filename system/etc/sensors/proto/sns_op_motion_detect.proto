@@ -1,0 +1,13 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_op_motion_detect_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_OP_MOTION_DETECT_MSGID_SNS_OP_MOTION_DETECT_DATA = 1029;
+}
+message sns_op_motion_detect_data
+{
+  repeated float op_motion_detect = 1 [(nanopb).max_count = 3];
+  required sns_std_sensor_sample_status accuracy = 2;
+}

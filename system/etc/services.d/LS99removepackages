@@ -1,0 +1,23 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+waitforsdcard $LOGFILE
+
+rmpkg () {
+    echo "   removing package $1" | tee -a $LOGFILE
+    /system/bin/cmd package uninstall "$1"
+}
+
+echo "-- removing packages" | tee -a $LOGFILE
+rmpkg com.google.android.apps.tachyon
+rmpkg com.google.android.inputmethod.latin
+rmpkg com.google.android.videos
+rmpkg com.google.android.music
+rmpkg com.oneplus.gallery
+rmpkg net.oneplus.launcher.black.overlay
+rmpkg net.oneplus.launcher.white.overlay
+rmpkg com.oneplus.brickmode
+rmpkg com.google.android.marvin.talkback

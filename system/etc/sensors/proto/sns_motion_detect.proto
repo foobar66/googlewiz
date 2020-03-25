@@ -1,0 +1,18 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+import "sns_physical_sensor_test.proto";
+enum sns_motion_detect_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_MOTION_DETECT_MSGID_SNS_MOTION_DETECT_EVENT  = 771;
+}
+enum sns_motion_detect_event_type {
+  option (nanopb_enumopt).long_names = false;
+  SNS_MOTION_DETECT_EVENT_TYPE_DISABLED = 0;
+  SNS_MOTION_DETECT_EVENT_TYPE_ENABLED  = 1;
+  SNS_MOTION_DETECT_EVENT_TYPE_FIRED    = 2;
+}
+message sns_motion_detect_event
+{
+  required sns_motion_detect_event_type motion_detect_event_type = 1 [default = SNS_MOTION_DETECT_EVENT_TYPE_DISABLED];
+}

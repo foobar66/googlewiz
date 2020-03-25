@@ -1,0 +1,13 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_pickup_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PICKUP_MSGID_SNS_PICKUP_DATA = 1028;
+}
+message sns_pickup_data
+{
+  repeated float pickup = 1 [(nanopb).max_count = 3];
+  required sns_std_sensor_sample_status accuracy = 2;
+}

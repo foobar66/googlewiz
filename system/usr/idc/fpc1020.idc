@@ -1,0 +1,2 @@
+keyboard.hasAssociatedDisplay=1
+keyboard.orientationAware=1

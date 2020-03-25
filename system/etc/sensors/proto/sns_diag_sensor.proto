@@ -1,0 +1,16 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_type.proto";
+enum sns_diag_sensor_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_SENSOR_MSGID_SNS_DIAG_LOG_TRIGGER_REQ = 520;
+}
+enum sns_diag_triggered_log_type {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_TRIGGERED_LOG_TYPE_ISLAND_LOG = 1;
+  SNS_DIAG_TRIGGERED_LOG_TYPE_MEMORY_USAGE_LOG = 2;
+}
+message sns_diag_log_trigger_req {
+  optional fixed64 cookie = 1;
+  required sns_diag_triggered_log_type log_type = 2;
+}

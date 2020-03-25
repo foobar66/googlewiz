@@ -1,0 +1,21 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_type.proto";
+enum sns_suid_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_SUID_MSGID_SNS_SUID_REQ = 512;
+  SNS_SUID_MSGID_SNS_SUID_EVENT = 768;
+}
+message sns_suid_sensor {
+  required fixed64 suid_low = 1 [default = 0xabababababababab];
+  required fixed64 suid_high = 2 [default = 0xabababababababab];
+}
+message sns_suid_req {
+  required string data_type = 1;
+  optional bool register_updates = 2;
+  optional bool default_only = 3 [default = true];
+}
+message sns_suid_event {
+  required string data_type = 1;
+  repeated sns_std_suid suid = 2;
+}

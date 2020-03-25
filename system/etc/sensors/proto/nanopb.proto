@@ -1,0 +1,42 @@
+syntax = "proto2";
+import "google/protobuf/descriptor.proto";
+option java_package = "fi.kapsi.koti.jpa.nanopb";
+enum FieldType {
+    FT_DEFAULT = 0; 
+    FT_CALLBACK = 1; 
+    FT_POINTER = 4; 
+    FT_STATIC = 2; 
+    FT_IGNORE = 3; 
+}
+enum IntSize {
+    IS_DEFAULT = 0; 
+    IS_8 = 8;
+    IS_16 = 16;
+    IS_32 = 32;
+    IS_64 = 64;
+}
+message NanoPBOptions {
+  optional int32 max_size = 1;
+  optional int32 max_count = 2;
+  optional IntSize int_size = 7 [default = IS_DEFAULT];
+  optional FieldType type = 3 [default = FT_DEFAULT];
+  optional bool long_names = 4 [default = true];
+  optional bool packed_struct = 5 [default = false];
+  optional bool packed_enum = 10 [default = false];
+  optional bool skip_message = 6 [default = false];
+  optional bool no_unions = 8 [default = false];
+  optional uint32 msgid = 9;
+  optional bool anonymous_oneof = 11 [default = false];
+}
+extend google.protobuf.FileOptions {
+    optional NanoPBOptions nanopb_fileopt = 1010;
+}
+extend google.protobuf.MessageOptions {
+    optional NanoPBOptions nanopb_msgopt = 1010;
+}
+extend google.protobuf.EnumOptions {
+    optional NanoPBOptions nanopb_enumopt = 1010;
+}
+extend google.protobuf.FieldOptions {
+    optional NanoPBOptions nanopb = 1010;
+}

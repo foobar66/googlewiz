@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_tilt_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_TILT_MSGID_SNS_TILT_EVENT = 774;
+}

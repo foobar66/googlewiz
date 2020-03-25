@@ -1,0 +1,170 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std.proto";
+import "sns_std_sensor.proto";
+import "sns_client.proto";
+enum sns_diag_batch_sample_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_BATCH_SAMPLE_TYPE_ONLY = 0;
+  SNS_DIAG_BATCH_SAMPLE_TYPE_FIRST = 1;
+  SNS_DIAG_BATCH_SAMPLE_TYPE_INTERMEDIATE = 2;
+  SNS_DIAG_BATCH_SAMPLE_TYPE_LAST = 3;
+}
+enum sns_diag_interrupt
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_INTERRUPT_THRESHOLD = 0;
+  SNS_DIAG_INTERRUPT_MOTION    = 1;
+  SNS_DIAG_INTERRUPT_TILT      = 2;
+  SNS_DIAG_INTERRUPT_FREE_FALL = 3;
+  SNS_DIAG_INTERRUPT_DOUBLE_TAP= 4;
+  SNS_DIAG_INTERRUPT_SHOCK     = 5;
+  SNS_DIAG_INTERRUPT_CCD_AMD   = 6;
+  SNS_DIAG_INTERRUPT_CCD_WALK  = 7;
+  SNS_DIAG_INTERRUPT_CCD_TILT  = 8;
+  SNS_DIAG_INTERRUPT_CCD_TE0   = 9;
+  SNS_DIAG_INTERRUPT_CCD_TE1   = 10;
+  SNS_DIAG_INTERRUPT_CCD_TE2   = 11;
+}
+message sns_diag_opaque_payload
+{
+  required bytes payload = 1;
+}
+message sns_diag_batch_sample
+{
+  required sns_diag_batch_sample_type sample_type = 1 [default = SNS_DIAG_BATCH_SAMPLE_TYPE_ONLY];
+  required fixed64 timestamp = 2;
+  repeated float sample = 3;
+  required sns_std_sensor_sample_status status = 4 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+}
+message sns_diag_sensor_state_interrupt
+{
+  required sns_diag_interrupt interrupt = 1;
+  required fixed64 timestamp = 2;
+}
+message sns_diag_sensor_state_raw
+{
+  repeated sns_diag_batch_sample sample = 1;
+}
+message sns_diag_client_resp_msg
+{
+  required sns_std_error error = 1;
+}
+message sns_diag_client_api_log
+{
+  required fixed64 client_id = 1;
+  required string src_sensor_type = 2;
+  oneof client_api_log_payload
+  {
+    sns_client_request_msg request_payload = 100;
+    sns_client_event_msg event_payload = 101;
+    sns_diag_client_resp_msg resp_payload = 102;
+  }
+}
+message sns_diag_sensor_api_log
+{
+  required fixed32 message_id = 1;
+  required fixed64 timestamp = 2;
+  optional fixed64 stream_id = 3;
+  oneof sensor_api_log_payload
+  {
+    sns_diag_opaque_payload opaque_payload = 100;
+    sns_std_request request_payload = 101;
+  }
+}
+message sns_diag_sensor_log
+{
+  required fixed32 log_id = 1;
+  required fixed64 timestamp = 2;
+  required sns_std_suid suid = 3;
+  required string sensor_type = 4;
+  required fixed64 instance_id = 5;
+  oneof sensor_log_payload
+  {
+    sns_diag_opaque_payload opaque_payload = 100;
+    sns_diag_sensor_api_log sensor_api_payload = 101;
+    sns_diag_client_api_log client_api_payload = 102;
+    sns_diag_sensor_state_raw sensor_state_raw_payload = 103;
+    sns_diag_sensor_state_interrupt sensor_state_interrupt_payload = 104;
+  }
+}
+message sns_diag_instance_map_log
+{
+  required fixed64 src_instance_id = 1;
+  repeated fixed64 dest_instance_id = 2;
+  repeated fixed64 stream_id = 3;
+}
+enum sns_diag_island_state
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_ISLAND_STATE_IN_ISLAND_MODE = 0;
+  SNS_DIAG_ISLAND_STATE_NOT_IN_ISLAND_MODE = 1;
+  SNS_DIAG_ISLAND_STATE_ISLAND_DISABLED = 2;
+}
+message sns_diag_island_transition_log
+{
+  required fixed64 timestamp = 1;
+  required sns_diag_island_state island_state = 2;
+  optional fixed64 cookie = 3;
+  optional fixed64 total_island_time = 4;
+}
+message sns_diag_island_exit_vote_log
+{
+  required fixed64 timestamp = 1;
+  optional sns_std_suid sensor = 2;
+}
+enum sns_diag_heap_id
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DIAG_HEAP_ID_HEAP_MAIN = 0;
+  SNS_DIAG_HEAP_ID_HEAP_ISLAND = 1;
+  SNS_DIAG_HEAP_ID_HEAP_PRAM = 2;
+  SNS_DIAG_HEAP_ID_HEAP_EVENT = 3;
+  SNS_DIAG_HEAP_ID_HEAP_BATCH = 4;
+  SNS_DIAG_HEAP_ID_EVENT_BUFFER = 100;
+}
+message sns_diag_mem_utilization_log
+{
+  required fixed64 timestamp = 1;
+  required sns_diag_heap_id heap_id = 2;
+  required fixed32 total_memory = 3;
+  required fixed32 used_memory = 4;
+  optional fixed64 cookie = 5;
+}
+message sns_diag_event_service_log
+{
+  required fixed64 timestamp = 1;
+  optional fixed64 cookie = 2;
+  message heap_stats
+  {
+    enum sns_event_service_heap_id
+    {
+      SNS_EVENT_SERVICE_HEAP_ID_ISLAND = 0;
+      SNS_EVENT_SERVICE_HEAP_ID_MAIN = 1;
+    }
+    required sns_event_service_heap_id heap_id = 1;
+    required fixed32 total_memory = 2;
+    required fixed32 used_memory = 3;
+    required fixed32 max_memory = 4;
+    required fixed32 total_clusters = 5;
+    required fixed32 used_clusters = 6;
+    required fixed32 max_clusters = 7;
+    required fixed32 alloc_failures = 8;
+    required fixed32 max_size = 9;
+  }
+  repeated heap_stats stats = 3;
+}
+message sns_diag_fw_log
+{
+  required fixed32 log_id = 1;
+  required fixed64 timestamp = 2;
+  oneof fw_log_payload
+  {
+    sns_diag_instance_map_log instance_map_payload = 100;
+    sns_diag_island_transition_log island_mode_payload = 101;
+    sns_diag_island_exit_vote_log island_exit_vote_payload = 102;
+    sns_diag_mem_utilization_log memory_utilization_payload = 103;
+    sns_diag_event_service_log event_service_payload = 104;
+  }
+}

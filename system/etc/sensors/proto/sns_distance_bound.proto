@@ -1,0 +1,41 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_distance_bound_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DISTANCE_BOUND_MSGID_SNS_SET_DISTANCE_BOUND = 516;
+  SNS_DISTANCE_BOUND_MSGID_SNS_GET_DISTANCE_ACCUMULATED = 517;
+  SNS_DISTANCE_BOUND_MSGID_SNS_DISTANCE_BOUND_EVENT = 772;
+  SNS_DISTANCE_BOUND_MSGID_SNS_GET_DISTANCE_ACCUMULATED_EVENT = 773;
+}
+enum sns_distance_bound_motion_state
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DB_MS_UNKNOWN     = 0;
+  SNS_DB_MS_STATIONARY  = 1;
+  SNS_DB_MS_MOVE        = 2;
+  SNS_DB_MS_FIDDLE      = 3;
+  SNS_DB_MS_PEDESTRIAN  = 4;
+  SNS_DB_MS_VEHICLE     = 5;
+  SNS_DB_MS_WALK        = 6;
+  SNS_DB_MS_RUN         = 7;
+  SNS_DB_MS_BIKE        = 8;
+  SNS_DB_MS_MAX         = 9;
+}
+message sns_set_distance_bound
+{
+  required float distance_bound = 1;
+  message speeds {
+    required sns_distance_bound_motion_state state = 1;
+    required  float speed = 2;
+  }
+  repeated speeds speed_bound = 2;
+}
+message sns_distance_bound_event
+{
+  required float distance_accumulated = 1;
+}
+message sns_get_distance_accumulated_event
+{
+  required float distance_accumulated = 1;
+}

@@ -1,0 +1,22 @@
+#!/system/bin/sh
+
+# does not work on Android Q
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+SP=/system/bin/setprop
+
+waitforsdcard $LOGFILE
+
+dosetprop() {
+    echo "-- property: $1 = $2" | tee -a $LOGFILE
+    $SP "$1" "$2"
+}
+
+# The global logging level
+# VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT or SILENT
+# Only the first character is the key character.
+# set logging level to Silent
+dosetprop log.tag S

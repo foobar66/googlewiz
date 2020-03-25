@@ -1,0 +1,25 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_dpc_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DPC_MSGID_SNS_DPC_EVENT_CONFIG = 777;
+  SNS_DPC_MSGID_SNS_DPC_EVENT = 1030;
+}
+enum sns_dpc_state
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DPC_UNKNOWN         = 1;
+  SNS_DPC_FLAT_STATIC     = 2;
+  SNS_DPC_HIDDEN          = 3;
+  SNS_DPC_IN_HAND         = 4;
+  SNS_DPC_FACING          = 5;
+}
+message sns_dpc_event
+{
+  required sns_dpc_state dpc_state = 1;
+}
+message sns_dpc_event_config
+{
+  required sns_dpc_state dpc_state = 1;
+}

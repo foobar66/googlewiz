@@ -1,0 +1,10 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+CMD=/system/bin/cmd
+
+sleep 10
+
+echo "-- forcing night mode via cmd uimode night yes" | tee -a $LOGFILE
+$CMD uimode night yes

@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_cmd_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_CMD_MSGID_SNS_CMD_EVENT = 772;
+}

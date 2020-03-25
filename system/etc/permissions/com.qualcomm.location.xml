@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><permissions><library name="services.core" file="/system/framework/services.jar"/><permission name="com.qualcomm.permission.IZAT"><group gid="gps"/><group gid="system"/><group gid="diag"/><group gid="sdcard_rw"/><group gid="media_rw"/><group gid="wifi"/></permission></permissions>

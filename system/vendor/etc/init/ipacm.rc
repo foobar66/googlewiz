@@ -1,0 +1,6 @@
+service vendor.ipacm /system/vendor/bin/ipacm
+    class main
+    user radio
+    group radio inet
+on post-fs
+    start vendor.ipacm

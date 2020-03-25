@@ -1,0 +1,12 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_aont_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_AONT_MSGID_SNS_AONT_DATA = 1024;
+}
+message sns_aont_data
+{
+  repeated float aont = 1 [(nanopb).max_count = 3];
+}

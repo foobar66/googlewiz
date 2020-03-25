@@ -1,0 +1,18 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_rmd_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_RMD_MSGID_SNS_RMD_EVENT = 772;
+}
+enum sns_rmd_event_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_RMD_EVENT_TYPE_UNKNOWN          = 0;
+  SNS_RMD_EVENT_TYPE_STATIONARY       = 1;
+  SNS_RMD_EVENT_TYPE_MOTION           = 2;
+}
+message sns_rmd_event
+{
+  required sns_rmd_event_type state = 1 [default = SNS_RMD_EVENT_TYPE_UNKNOWN];
+}

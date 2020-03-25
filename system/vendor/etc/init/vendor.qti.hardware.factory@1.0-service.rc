@@ -1,0 +1,7 @@
+service vendor-factory-hal-1-0 /vendor/bin/hw/vendor.qti.hardware.factory@1.0-service
+    interface vendor.qti.hardware.factory@1.1::IFactory default
+    class hal
+    user system
+    group system
+    disabled
+    oneshot

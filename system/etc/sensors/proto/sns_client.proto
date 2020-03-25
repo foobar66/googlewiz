@@ -1,0 +1,33 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std.proto";
+import "sns_std_type.proto";
+enum sns_client_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_CLIENT_MSGID_SNS_CLIENT_DISABLE_REQ = 10;
+}
+enum sns_client_delivery {
+  option (nanopb_enumopt).long_names = false;
+  SNS_CLIENT_DELIVERY_WAKEUP = 0;
+  SNS_CLIENT_DELIVERY_NO_WAKEUP = 1;
+}
+message sns_client_request_msg {
+  required sns_std_suid suid = 1;
+  required fixed32 msg_id = 2;
+  message suspend_config {
+    required sns_std_client_processor client_proc_type = 1 [default = SNS_STD_CLIENT_PROCESSOR_APSS];
+    required sns_client_delivery  delivery_type = 2 [default = SNS_CLIENT_DELIVERY_WAKEUP];
+    repeated fixed32 nowakeup_msg_ids = 3;
+  }
+  required suspend_config susp_config = 3;
+  required sns_std_request request = 4;
+}
+message sns_client_event_msg {
+  required sns_std_suid suid = 1;
+  message sns_client_event {
+    required fixed32 msg_id = 1;
+    required fixed64 timestamp = 2;
+    required bytes payload = 3;
+  }
+  repeated sns_client_event events = 2;
+}

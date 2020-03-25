@@ -1,0 +1,23 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_multishake_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_MULTISHAKE_MSGID_SNS_MULTISHAKE_CONFIG = 512;
+  SNS_MULTISHAKE_MSGID_SNS_MULTISHAKE_EVENT = 1024;
+}
+enum multishake_axis
+{
+  option (nanopb_enumopt).long_names = false;
+  MULTISHAKE_AXIS_UNKNOWN_AXIS = 0;
+  MULTISHAKE_AXIS_X_AXIS = 1;
+  MULTISHAKE_AXIS_Y_AXIS = 2;
+}
+message sns_multishake_config
+{
+  repeated multishake_axis shake_axis = 1 [(nanopb).max_count = 3];
+}
+message sns_multishake_event
+{
+  required multishake_axis shake_axis = 1;
+}

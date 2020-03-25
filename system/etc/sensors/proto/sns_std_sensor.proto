@@ -1,0 +1,89 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_std_sensor_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_SENSOR_MSGID_SNS_STD_SENSOR_CONFIG = 513;
+  SNS_STD_SENSOR_MSGID_SNS_STD_ON_CHANGE_CONFIG  = 514;
+  SNS_STD_SENSOR_MSGID_SNS_STD_SENSOR_PHYSICAL_CONFIG_EVENT = 768;
+  SNS_STD_SENSOR_MSGID_SNS_STD_SENSOR_EVENT = 1025;
+}
+enum sns_std_sensor_sample_status
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE = 0;
+  SNS_STD_SENSOR_SAMPLE_STATUS_ACCURACY_LOW = 1;
+  SNS_STD_SENSOR_SAMPLE_STATUS_ACCURACY_MEDIUM = 2;
+  SNS_STD_SENSOR_SAMPLE_STATUS_ACCURACY_HIGH = 3;
+}
+enum sns_std_sensor_attr_id
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_SENSOR_ATTRID_NAME = 0;
+  SNS_STD_SENSOR_ATTRID_VENDOR = 1;
+  SNS_STD_SENSOR_ATTRID_TYPE = 2;
+  SNS_STD_SENSOR_ATTRID_AVAILABLE = 3;
+  SNS_STD_SENSOR_ATTRID_VERSION = 4;
+  SNS_STD_SENSOR_ATTRID_API = 5;
+  SNS_STD_SENSOR_ATTRID_RATES = 6;
+  SNS_STD_SENSOR_ATTRID_RESOLUTIONS = 7;
+  SNS_STD_SENSOR_ATTRID_FIFO_SIZE = 8;
+  SNS_STD_SENSOR_ATTRID_ACTIVE_CURRENT = 9;
+  SNS_STD_SENSOR_ATTRID_SLEEP_CURRENT = 10;
+  SNS_STD_SENSOR_ATTRID_RANGES = 11;
+  SNS_STD_SENSOR_ATTRID_OP_MODES = 12;
+  SNS_STD_SENSOR_ATTRID_DRI = 13;
+  SNS_STD_SENSOR_ATTRID_STREAM_SYNC = 14;
+  SNS_STD_SENSOR_ATTRID_EVENT_SIZE = 15;
+  SNS_STD_SENSOR_ATTRID_STREAM_TYPE = 16;
+  SNS_STD_SENSOR_ATTRID_DYNAMIC = 17;
+  SNS_STD_SENSOR_ATTRID_HW_ID = 18;
+  SNS_STD_SENSOR_ATTRID_RIGID_BODY = 19;
+  SNS_STD_SENSOR_ATTRID_PLACEMENT = 20;
+  SNS_STD_SENSOR_ATTRID_PHYSICAL_SENSOR = 21;
+  SNS_STD_SENSOR_ATTRID_PHYSICAL_SENSOR_TESTS = 22;
+  SNS_STD_SENSOR_ATTRID_SELECTED_RESOLUTION = 23;
+  SNS_STD_SENSOR_ATTRID_SELECTED_RANGE = 24;
+  SNS_STD_SENSOR_ATTRID_ADDITIONAL_LOW_LATENCY_RATES = 25;
+  SNS_STD_SENSOR_ATTRID_PASSIVE_REQUEST = 26;
+}
+message sns_std_sensor_config
+{
+  required float sample_rate = 1;
+}
+message sns_std_sensor_event
+{
+  repeated float data = 1;
+  required sns_std_sensor_sample_status status = 2 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+}
+enum sns_std_sensor_stream_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_SENSOR_STREAM_TYPE_STREAMING = 0;
+  SNS_STD_SENSOR_STREAM_TYPE_ON_CHANGE = 1;
+  SNS_STD_SENSOR_STREAM_TYPE_SINGLE_OUTPUT = 2;
+}
+enum sns_std_sensor_rigid_body_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_SENSOR_RIGID_BODY_TYPE_DISPLAY = 0;
+  SNS_STD_SENSOR_RIGID_BODY_TYPE_KEYBOARD = 1;
+  SNS_STD_SENSOR_RIGID_BODY_TYPE_EXTERNAL = 2;
+}
+message sns_std_sensor_config_event
+{
+   required float sample_rate = 1;
+}
+message sns_std_sensor_physical_config_event
+{
+  optional float sample_rate = 1;
+  optional uint32 water_mark = 2;
+  repeated float range = 3 [(nanopb).max_count = 2];
+  optional float resolution = 4;
+  optional string operation_mode = 5;
+  optional uint32 active_current = 6;
+  optional bool stream_is_synchronous = 7;
+  optional bool dri_enabled = 8;
+  optional uint32 DAE_watermark = 9;
+  optional uint64 sync_ts_anchor = 10;
+}

@@ -248,10 +248,11 @@ copyfiles () {
 # start building module
 
 echo -e "-- building module: $MODULE"
-
 echo -e "-- creating basic structure in $MODULE/system"
 # erase the whole system and recreate the basic structure
 rm -rf $MODULE/system/*
+
+exit 0
 
 # /system/build.prop
 # note that this does not work at run time

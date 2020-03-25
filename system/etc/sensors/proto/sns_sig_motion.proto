@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_sig_motion_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_SIG_MOTION_MSGID_SNS_SIG_MOTION_EVENT = 772;
+}

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<gs>
+<p att="com.android.cts.net"></p>
+<p att="com.android.cts.stub"></p>
+<p att="com.android.cts.verifier"></p>
+<p att="com.android.cts.permissiondeclareappcompat"></p>
+<p att="com.skype.raider"></p>
+<p att="com.microsoft.office.lync15"></p>
+<p att="com.whatsapp"></p>
+<p att="com.viber.voip"></p>
+<p att="com.Slack"></p>
+<p att="com.google.android.apps.messaging"></p>
+<p att="com.google.android.apps.tachyon"></p>
+</gs>

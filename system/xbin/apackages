@@ -1,0 +1,46 @@
+#!/system/xbin/bash
+
+# fetch files names + package names
+if [ "$2" != "" ]; then
+    pkg=`pm list packages -f | sed -e 's/package://g' | sort`
+else
+    pkg=`pm list packages -f | sed -e 's/package://g' | sort`
+fi
+
+LI=()
+for P in $pkg; do
+    if [ "$1" == "" ]; then
+        # just push the entry <file>=<package>
+        LI+=("$P")
+    else
+        # extract filename and packagename and concat them
+        # so each entry looks like <package>=<filename>
+        P1=`echo $P | sed 's/apk=/apk /g' | awk '{print $1}'`
+        P2=`echo $P | sed 's/apk=/apk /g' | awk '{print $2}'`
+        LI+=("$P2=$P1")
+    fi
+done
+rm -rf /sdcard/pkgdata
+touch /sdcard/pkgdata
+for P in "${LI[@]:1}"; do
+    echo "$P" >> /sdcard/pkgdata
+done
+
+for P in `sort /sdcard/pkgdata | grep -v SwiftBlack | grep "$2"`; do
+    if [ "$1" == "" ]; then
+        P1=`echo $P | sed 's/apk=/apk /g' | awk '{print $1}'`
+        P2=`echo $P | sed 's/apk=/apk /g' | awk '{print $2}' | sed -e 's/ //g'`
+    else
+        P1=`echo $P | sed 's%=/% /%g' | awk '{print $2}'`
+        P2=`echo $P | sed 's%=/% /%g' | awk '{print $1}' | sed -e 's/ //g'`
+    fi
+    VER=`dumpsys package $P2 | grep versionName | head -n 1 | sed -e 's/versionName=//g' | sed -e 's/ //g' | cut -c-15`
+    VERC=`dumpsys package $P2 | grep versionCode | head -n 1 | awk '{print $1}' | sed 's/versionCode=//g' | cut -c-15`
+    if [ "$1" == "" ]; then
+        # argument was not supplied, it means file name is before the = sign
+        printf "%-92s |%15s| %-s\n" "$P1" "$VER" "$P2"
+    else
+        printf "%-46s |%15s|%12s| %-10s\n" "$P2" "$VER" "($VERC)" "$P1"
+    fi
+done
+rm -rf /sdcard/pkgdata

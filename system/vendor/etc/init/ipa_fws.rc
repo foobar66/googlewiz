@@ -1,0 +1,2 @@
+on post-fs
+write /dev/ipa 1

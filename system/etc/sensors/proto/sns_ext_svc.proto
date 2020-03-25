@@ -1,0 +1,33 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_ext_svc_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_EXT_SVC_MSGID_SNS_EXT_SVC_REQ = 512;
+  SNS_EXT_SVC_MSGID_SNS_EXT_SVC_RESP = 768;
+  SNS_EXT_SVC_MSGID_SNS_EXT_SVC_IND = 1024;
+}
+enum sns_ext_svc
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_EXT_SVC_LOCATION = 0;
+}
+message sns_ext_svc_req
+{
+  required sns_ext_svc svc_id = 1;
+  required int32 msg_id = 2;
+  optional int32 transaction_id = 3;
+  required bytes payload = 4;
+}
+message sns_ext_svc_resp
+{
+  required int32 msg_id = 1;
+  required int32 transp_err = 2;
+  optional int32 transaction_id = 3;
+  required bytes payload = 4;
+}
+message sns_ext_svc_ind
+{
+  required int32 msg_id = 1;
+  required bytes payload = 2;
+}

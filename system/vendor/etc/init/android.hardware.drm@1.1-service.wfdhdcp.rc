@@ -1,0 +1,3 @@
+service wfdhdcphalservice /vendor/bin/wfdhdcphalservice
+    class main
+    user system

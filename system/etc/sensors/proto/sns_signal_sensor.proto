@@ -1,0 +1,18 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_signal_sensor_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_SIGNAL_SENSOR_MSGID_SNS_SIGNAL_SENSOR_REQ = 512;
+  SNS_SIGNAL_SENSOR_MSGID_SNS_SIGNAL_SENSOR_TOKEN = 1024;
+  SNS_SIGNAL_SENSOR_MSGID_SNS_SIGNAL_SENSOR_NOTIFY = 1025;
+}
+message sns_signal_sensor_req
+{
+  required bool enable = 1;
+}
+message sns_signal_sensor_token
+{
+  required fixed64 thread = 1;
+  required fixed32 flag = 2;
+}

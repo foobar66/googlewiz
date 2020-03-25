@@ -1,0 +1,26 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std.proto";
+import "sns_std_sensor.proto";
+import "sns_resampler.proto";
+enum sns_threshold_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_THRESHOLD_MSGID_SNS_THRESHOLD_CONFIG = 512;
+}
+enum sns_threshold_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_THRESHOLD_TYPE_RELATIVE_VALUE = 0;
+  SNS_THRESHOLD_TYPE_RELATIVE_PERCENT = 1;
+  SNS_THRESHOLD_TYPE_ABSOLUTE = 2;
+  SNS_THRESHOLD_TYPE_ANGLE = 3;
+}
+message sns_threshold_config
+{
+  required sns_std_suid sensor_uid = 1;
+  repeated float threshold_val = 2;
+  required  sns_threshold_type  threshold_type = 3;
+  required uint32 payload_cfg_msg_id = 4;
+  required bytes payload = 5;
+}

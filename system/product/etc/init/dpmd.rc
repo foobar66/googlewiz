@@ -1,0 +1,9 @@
+on post-fs-data
+    mkdir /data/dpm 0771 system system
+    chown system system /data/dpm
+service dpmd /system/product/bin/dpmd
+    class late_start
+    socket dpmd stream 660 root radio
+    socket tcm  stream 660 root inet
+    socket dpmwrapper stream 660 root inet
+    group system readproc inet radio wakelock oem_2901

@@ -1,0 +1,9 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_std_event_gated_sensor_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_EVENT_GATED_SENSOR_MSGID_SNS_STD_SENSOR_CONFIG = 518;
+  SNS_STD_EVENT_GATED_SENSOR_MSGID_GATED_REQ_CONVERTED_TO_NON_GATED = 772;
+}

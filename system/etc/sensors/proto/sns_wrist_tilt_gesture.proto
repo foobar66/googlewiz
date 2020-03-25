@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_wrist_tilt_gesture_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_WRIST_TILT_GESTURE_MSGID_SNS_TILT_EVENT = 774;
+}

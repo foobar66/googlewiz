@@ -1,0 +1,11 @@
+service lpdumpd /system/bin/lpdumpd
+    oneshot
+    disabled
+    user system
+    group system
+    file /dev/block/by-name/${ro.boot.super_partition:-super} r
+    file /dev/block/by-name/${ro.boot.super_partition:-NO_SUCH_DEVICE}${ro.boot.slot_suffix:-_NO_SUCH_SUFFIX} r
+on property:sys.lpdumpd=start
+    start lpdumpd
+on property:sys.lpdumpd=stop
+    stop lpdumpd

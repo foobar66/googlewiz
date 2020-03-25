@@ -1,0 +1,107 @@
+#!/system/bin/sh
+
+display_usage() { 
+	echo "usage: dss enable|disable [package] ($1)"
+} 
+
+if [[  $# -ne 2 && $# -ne 1 ]]; then 
+		display_usage "needs 1 or 2 arguments"
+		exit 1
+fi
+
+if [[ "$1" != "enable" && "$1" != "disable" ]]; then
+    display_usage "first argument must be 'enable' or 'disable'"
+    exit 1
+fi
+
+# use -e flag to filter only "enabled" packages
+PLIST=`/system/bin/cmd package list packages -e | grep -v Swift | sort | sed 's/package://g'`
+
+if [ $# -eq 2 ]; then
+    if echo $PLIST | /system/bin/grep --quiet "$2"; then
+        PLIST=( $2 )
+    else
+        display_usage "second argument [$2]: package does not exist"
+        exit 1
+    fi
+fi
+
+CMD="$1"
+
+if [ "$1" == "enable" ]; then
+    CMD=enable
+else
+    if [ "$1" == "disable" ]; then
+        CMD=disable
+    else
+        CMD=enable
+    fi
+fi
+
+if [ $# -eq 1 ]; then
+    # specific disable
+    if echo $PLIST | /system/bin/grep --quiet 'org.kman.AquaMail'; then
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.AuthenticatorService$Ews'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.AuthenticatorService$Hotmail'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.AuthenticatorService$Yandex'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.AuthenticatorService$Yahoo'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.AuthenticatorService$Internet'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.MailSyncAdapterService$Ews'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.MailSyncAdapterService$Hotmail'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.MailSyncAdapterService$Yandex'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.MailSyncAdapterService$Yahoo'
+        pm $CMD 'org.kman.AquaMail/org.kman.AquaMail.accounts.MailSyncAdapterService$Internet'
+    fi
+
+    if echo $PLIST | /system/bin/grep --quiet 'com.dvtonder.chronus'; then
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.daydream.ChronusDaydreamService'
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.news.NewsFeedViewsService'
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.tasks.TasksViewsService'
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.stocks.StocksViewsService'
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.extensions.gmail.GmailExtension'
+        pm $CMD 'com.dvtonder.chronus/com.dvtonder.chronus.extensions.gmail.GmailContentTriggerJob'
+    fi
+fi
+
+for i in $PLIST; do
+    pm $CMD "$i/com.braintreepayments.api.internal.AnalyticsIntentService" 2> /dev/null
+		pm $CMD "$i/com.crashlytics.android.CrashlyticsInitProvider" 2> /dev/null
+    pm $CMD "$i/com.facebook.ads.internal.ipc.AdsMessengerService" 2> /dev/null
+    pm $CMD "$i/com.facebook.ads.internal.ipc.AdsProcessPriorityService" 2> /dev/null
+    pm $CMD "$i/com.facebook.internal.FacebookInitProvider" 2> /dev/null
+    pm $CMD "$i/com.google.analytics.tracking.android.CampaignTrackingReceiver" 2> /dev/null
+    pm $CMD "$i/com.google.analytics.tracking.android.CampaignTrackingService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.ads.AdActivity" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.ads.MobileAdsInitProvider" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.AnalyticsJobService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.AnalyticsReceiver" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.AnalyticsService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.AnalyticsTaskService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.CampaignTrackingService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.analytics.service.AnalyticsService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.auth.api.signin.RevocationBoundService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.measurement.AppMeasurementContentProvider" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.measurement.AppMeasurementJobService" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.measurement.AppMeasurementReceiver" 2> /dev/null
+    pm $CMD "$i/com.google.android.gms.measurement.AppMeasurementService" 2> /dev/null
+    pm $CMD "$i/com.google.firebase.perf.provider.FirebasePerfProvider" 2> /dev/null
+    pm $CMD "$i/com.google.firebase.provider.FirebasePerfProvider" 2> /dev/null
+done
+
+pm $CMD "com.google.android.gms/.backup.BackupTransportService"
+pm $CMD "com.google.android.gms/.thunderbird.settings.ThunderbirdSettingInjectorService"
+
+if [ $# -eq 1 ]; then
+    # disable instrumentation
+    pm $CMD "com.microsoft.office.excel/android.test.InstrumentationTestRunner"
+    pm $CMD "com.microsoft.office.word/android.test.InstrumentationTestRunner"
+    pm $CMD "com.microsoft.office.powerpoint/android.test.InstrumentationTestRunner"
+fi
+
+pm enable 'com.easymobile.lan.scanner/com.google.android.gms.ads.AdActivity'
+pm enable 'com.devhd.feedly/com.facebook.internal.FacebookInitProvider'
+pm enable 'com.arjanvlek.oxygenupdater/com.google.android.gms.ads.AdActivity'
+pm enable 'com.reader.androidworld3/com.google.android.gms.ads.AdActivity'
+pm enable 'com.aspiro.tidal/com.facebook.internal.FacebookInitProvider'
+

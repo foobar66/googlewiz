@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+mount -o rw,remount /
+mount -o rw,remount /vendor
+mount -o rw,remount /sbin/.magisk/mirror/system_root
+
+for i in `mount | grep '/sbin/.magisk/block/system_root' | grep '/system/app' | awk '{print $3}'`; do
+    mount -o rw,remount $i
+done

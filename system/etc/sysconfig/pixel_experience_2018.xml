@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><config><allow-in-power-save package="com.google.modemservice"/><allow-in-power-save package="com.google.android.apps.scone"/><allow-in-power-save package="com.android.pixellogger"/><feature name="com.google.android.feature.PIXEL_2018_EXPERIENCE"/></config>

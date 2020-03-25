@@ -1,0 +1,7 @@
+#!/system/bin/sh
+
+TB=/system/bin/toybox
+
+for pid in `cat /dev/cpuset/$1/cgroup.procs`; do
+    $TB ps -A -o user,pid,ppid,nice,args | grep -v '\[' | grep -v embryo | grep $pid | grep -v grep
+done

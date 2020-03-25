@@ -1,0 +1,38 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std.proto";
+import "sns_std_sensor.proto";
+import "sns_std_event_gated_sensor.proto";
+enum sns_resampler_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_RESAMPLER_MSGID_SNS_RESAMPLER_CONFIG = 512;
+  SNS_RESAMPLER_MSGID_SNS_RESAMPLER_CONFIG_EVENT = 776;
+}
+enum sns_resampler_rate
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_RESAMPLER_RATE_FIXED = 0;
+  SNS_RESAMPLER_RATE_MINIMUM = 1;
+}
+enum sns_resampler_quality
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_RESAMPLER_QUALITY_CURRENT_SAMPLE = 0;
+  SNS_RESAMPLER_QUALITY_FILTERED = 1;
+  SNS_RESAMPLER_QUALITY_INTERPOLATED_FILTERED = 2;
+  SNS_RESAMPLER_QUALITY_INTERPOLATED = 3;
+}
+message sns_resampler_config
+{
+  required sns_std_suid sensor_uid = 1;
+  required float resampled_rate = 2;
+  required sns_resampler_rate rate_type = 3;
+  required bool filter = 4;
+  optional bool event_gated = 5;
+  optional uint32 axis_cnt = 6;
+}
+message sns_resampler_config_event
+{
+  required sns_resampler_quality quality = 1;
+}

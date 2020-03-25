@@ -1,0 +1,27 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+import "sns_physical_sensor_test.proto";
+import "sns_cal.proto";
+enum sns_proximity_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_PROXIMITY_MSGID_SNS_PROXIMITY_EVENT  = 769;
+  SNS_PROXIMITY_MSGID_SNS_PROXIMITY_EVENT_RECURRENT  = 1031;
+}
+enum sns_proximity_event_type {
+  option (nanopb_enumopt).long_names = false;
+  SNS_PROXIMITY_EVENT_TYPE_FAR = 0;
+  SNS_PROXIMITY_EVENT_TYPE_NEAR  = 1;
+}
+message sns_proximity_event
+{
+  required sns_proximity_event_type proximity_event_type = 1 [default = SNS_PROXIMITY_EVENT_TYPE_FAR];
+  required uint32 raw_adc = 2;
+  required sns_std_sensor_sample_status status = 3 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+}
+message sns_proximity_event_recurrent
+{
+  required sns_proximity_event_type proximity_event_type = 1 [default = SNS_PROXIMITY_EVENT_TYPE_FAR];
+  required uint32 raw_adc = 2;
+  required sns_std_sensor_sample_status status = 3 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+}

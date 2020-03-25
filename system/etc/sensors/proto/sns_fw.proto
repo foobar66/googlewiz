@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_fw_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_FW_MSGID_SNS_DESTROY_REQ = 120;
+  SNS_FW_MSGID_SNS_DESTROY_COMPLETE_EVENT = 250;
+}

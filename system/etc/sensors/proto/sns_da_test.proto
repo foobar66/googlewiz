@@ -1,0 +1,22 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_da_test_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DA_TEST_MSGID_SNS_DA_TEST_REQ = 512;
+  SNS_DA_TEST_MSGID_SNS_DA_TEST_LOG = 768;
+  SNS_DA_TEST_MSGID_SNS_DA_TEST_EVENT  = 1024;
+}
+message sns_da_test_req {
+  optional string test_args = 1;
+}
+message sns_da_test_event {
+  optional string test_event = 1;
+}
+message sns_da_test_log {
+  required uint64 time_to_first_event = 1;
+  required sfixed32 time_to_last_event = 2;
+  required uint64 sample_ts = 3;
+  required uint32 total_samples = 4;
+  required uint32 avg_delta = 5;
+  required sfixed32 recvd_phy_config_sample_rate = 6;
+}

@@ -1,0 +1,18 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_offbody_detect_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_OFFBODY_DETECT_MSGID_SNS_OFFBODY_DETECT_EVENT = 772;
+}
+enum sns_offbody_detect_event_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_OFFBODY_DETECT_EVENT_TYPE_UNKNOWN     = 0;
+  SNS_OFFBODY_DETECT_EVENT_TYPE_ON          = 1;
+  SNS_OFFBODY_DETECT_EVENT_TYPE_OFF         = 2;
+}
+message sns_offbody_detect_event
+{
+  required sns_offbody_detect_event_type state = 1 [default = SNS_OFFBODY_DETECT_EVENT_TYPE_UNKNOWN];
+}

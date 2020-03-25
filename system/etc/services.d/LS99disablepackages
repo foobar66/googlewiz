@@ -1,0 +1,68 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+waitforsdcard $LOGFILE
+
+echo "-- disabling packages" | tee -a $LOGFILE
+
+/system/bin/cmd package disable android.autoinstalls.config.oneplus
+/system/bin/cmd package disable cn.oneplus.nvbackup
+/system/bin/cmd package disable cn.oneplus.oemtcma
+/system/bin/cmd package disable cn.oneplus.opmms
+/system/bin/cmd package disable cn.oneplus.photos
+/system/bin/cmd package disable com.android.backup
+/system/bin/cmd package disable com.android.bips
+/system/bin/cmd package disable com.android.bluetoothmidiservice
+/system/bin/cmd package disable com.android.bookmarkprovider
+/system/bin/cmd package disable com.android.carrierdefaultapp
+/system/bin/cmd package disable com.android.companiondevicemanager
+/system/bin/cmd package disable com.android.cts.ctsshim
+/system/bin/cmd package disable com.android.dreams.basic
+/system/bin/cmd package disable com.android.egg
+/system/bin/cmd package disable com.android.htmlviewer
+/system/bin/cmd package disable com.android.pacprocessor
+/system/bin/cmd package disable com.android.providers.partnerbookmarks
+/system/bin/cmd package disable com.android.simappdialog
+/system/bin/cmd package disable com.android.smspush
+/system/bin/cmd package disable com.android.traceur
+/system/bin/cmd package disable com.android.wallpaper.livepicker
+/system/bin/cmd package disable com.android.wallpaperbackup
+/system/bin/cmd package disable com.dsi.ant.server
+/system/bin/cmd package disable com.example.wifirftest
+/system/bin/cmd package disable com.fingerprints.fingerprintsensortest
+/system/bin/cmd package disable com.google.android.printservice.recommendation
+/system/bin/cmd package disable com.oem.autotest
+/system/bin/cmd package disable com.oem.logkitsdservice
+/system/bin/cmd package disable com.oem.nfc
+/system/bin/cmd package disable com.oem.oemlogkit
+/system/bin/cmd package disable com.oem.rftoolkit
+/system/bin/cmd package disable com.oneplus.appupgrader
+/system/bin/cmd package disable com.oneplus.asti
+/system/bin/cmd package disable com.oneplus.backuprestore.remoteservice
+/system/bin/cmd package disable com.oneplus.brickmode
+/system/bin/cmd package disable com.oneplus.bttestmode
+/system/bin/cmd package disable com.oneplus.calculator
+/system/bin/cmd package disable com.oneplus.deskclock
+/system/bin/cmd package disable com.oneplus.diagnosemanager
+/system/bin/cmd package disable com.oneplus.factorymode
+/system/bin/cmd package disable com.oneplus.factorymode.specialtest
+/system/bin/cmd package disable com.oneplus.filemanager
+/system/bin/cmd package disable com.oneplus.gamespace
+/system/bin/cmd package disable com.oneplus.geoiptime
+/system/bin/cmd package disable com.oneplus.opbackup
+/system/bin/cmd package disable com.oneplus.opbugreportlite
+/system/bin/cmd package disable com.oneplus.screenrecord
+/system/bin/cmd package disable com.oneplus.sdcardservice
+/system/bin/cmd package disable com.oneplus.ses
+/system/bin/cmd package disable com.oneplus.sms.smscplugger
+/system/bin/cmd package disable com.oneplus.sound.tuner
+/system/bin/cmd package disable com.oneplus.wallpaper
+/system/bin/cmd package disable com.qualcomm.qti.qcolor
+/system/bin/cmd package disable com.tencent.soter.soterserver
+/system/bin/cmd package disable com.wapi.wapicertmanage
+/system/bin/cmd package disable net.oneplus.commonlogtool
+/system/bin/cmd package disable net.oneplus.push
+/system/bin/cmd package disable net.oneplus.wallpaperresources

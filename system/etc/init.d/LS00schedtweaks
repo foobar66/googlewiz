@@ -1,0 +1,9 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+echo "-- applying scheduling tweaks" | tee -a $LOGFILE
+sysset 7000000 /proc/sys/kernel/sched_latency_ns
+sysset 60 /proc/sys/kernel/sched_rr_timeslice_ms

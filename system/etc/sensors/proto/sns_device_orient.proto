@@ -1,0 +1,21 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_device_orient_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DEVICE_ORIENT_MSGID_SNS_DEVICE_ORIENT_EVENT = 776;
+}
+enum sns_device_orient_event_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_UNKNOWN     = -1;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_DEFAULT     = 0;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_POS_1      = 1;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_POS_2      = 2;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_POS_3      = 3;
+  SNS_DEVICE_ORIENT_EVENT_TYPE_POS_4      = 4;
+}
+message sns_device_orient_event
+{
+  required sns_device_orient_event_type state = 1;
+}

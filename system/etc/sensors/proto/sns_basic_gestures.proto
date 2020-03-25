@@ -1,0 +1,39 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_basic_gestures_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_BASIC_GESTURES_MSGID_SNS_BASIC_GESTURES_CONFIG = 512;
+  SNS_BASIC_GESTURES_MSGID_SNS_BASIC_GESTURES_EVENT = 1024;
+}
+enum sns_basic_gestures_event_mask
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_BASIC_GESTURES_EVENT_MASK_PUSH_AND_PULL        = 1;
+  SNS_BASIC_GESTURES_EVENT_MASK_SHAKE_LEFT_AND_RIGHT = 2;
+  SNS_BASIC_GESTURES_EVENT_MASK_SHAKE_TOP_AND_BOTTOM = 4;
+  SNS_BASIC_GESTURES_EVENT_MASK_SHAKE_OTHER          = 8;
+}
+enum sns_basic_gestures_event_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_BASIC_GESTURES_EVENT_TYPE_PUSH          = 1;
+  SNS_BASIC_GESTURES_EVENT_TYPE_PULL          = 2;
+  SNS_BASIC_GESTURES_EVENT_TYPE_SHAKE_LEFT    = 3;
+  SNS_BASIC_GESTURES_EVENT_TYPE_SHAKE_RIGHT   = 4;
+  SNS_BASIC_GESTURES_EVENT_TYPE_SHAKE_TOP     = 5;
+  SNS_BASIC_GESTURES_EVENT_TYPE_SHAKE_BOTTOM  = 6;
+  SNS_BASIC_GESTURES_EVENT_TYPE_SHAKE_OTHER   = 7;
+}
+message sns_basic_gestures_config
+{
+  optional float sleep           = 1;
+  optional float push_threshold  = 2;
+  optional float pull_threshold  = 3;
+  optional float shake_threshold = 4;
+  optional bytes event_mask    = 5;
+}
+message sns_basic_gestures_event
+{
+ required sns_basic_gestures_event_type state=1;
+}

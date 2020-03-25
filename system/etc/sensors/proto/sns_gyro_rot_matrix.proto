@@ -1,0 +1,8 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_gyro_rot_matrix_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_GYRO_ROT_MATRIX_MSGID_SNS_STD_SENSOR_EVENT = 1024;
+}

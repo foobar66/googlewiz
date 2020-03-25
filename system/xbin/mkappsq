@@ -1,0 +1,12 @@
+#!/system/bin/sh
+
+MODULE=/sbin/.core/modules/googlewiz
+
+rm -rf /sdcard/modappsq.tar
+cd $MODULE
+echo "Creating /sdcard/modappsq.tar"
+tar cfp /sdcard/modappsq.tar \
+    system/app/My* \
+    vendor/app/My*
+sync
+sync

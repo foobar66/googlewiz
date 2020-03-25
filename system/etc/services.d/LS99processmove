@@ -1,0 +1,48 @@
+#!/system/bin/sh
+
+exit 0
+
+# well, it did not work after all
+# audio input to the google search app got blocked
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+waitforsdcard $LOGFILE
+
+TB=/system/bin/toybox
+BB=/system/xbin/busybox
+
+echo "-- sleeping for 20 seconds to make sure processes are started" | tee -a $LOGFILE
+sleep 20
+
+changecgroup () {
+    GROUP="$1"
+    PROCESS="$2"
+    PIDS=$($TB pidof $PROCESS)
+    echo "-- moving process $PROCESS to /dev/cpuset/$GROUP/tasks" | tee -a $LOGFILE
+    for PID in $PIDS; do
+        echo "   -- moving PID $PID to /dev/cpuset/$GROUP/tasks" | tee -a $LOGFILE
+        echo "$PID" > /dev/cpuset/$GROUP/tasks
+    done
+}
+    
+changecgroup system-background qseecomd
+changecgroup system-background thermal-engine
+changecgroup system-background dashd
+changecgroup system-background rmt_storage
+changecgroup system-background netmgrd
+changecgroup system-background logcat
+changecgroup system-background logd
+changecgroup system-background msm_irqbalance
+changecgroup system-background wpa_supplicant
+changecgroup system-background netd
+changecgroup system-background healthd
+changecgroup system-background qti
+#changecgroup system-background drmserver
+changecgroup system-background loc_launcher
+
+echo "-- sleeping for another 60 seconds to make sure embryo processes are started" | tee -a $LOGFILE
+sleep 60
+changecgroup system-background embryo

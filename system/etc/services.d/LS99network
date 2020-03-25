@@ -1,0 +1,20 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+PROP=/system/bin/getprop
+BB=/system/xbin/busybox
+HDPARM=/system/xbin/hdparm
+IFCONFIG="toybox ifconfig"
+VALUE=1000
+
+for i in $(find /sys/class/net -type l); do
+    sysset "$VALUE" $i/tx_queue_len
+done
+
+sysset westwood /proc/sys/net/ipv4/tcp_congestion_control
+sysset 0 /sys/module/wlan/parameters/con_mode
+sysset 0 /sys/module/wlan/parameters/con_mode_ftm
+sysset 0 /sys/module/wlan/parameters/prealloc_disabled

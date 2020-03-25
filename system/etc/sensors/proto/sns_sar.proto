@@ -1,0 +1,13 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_sar_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_SAR_MSGID_SNS_SAR_DATA = 1026;
+}
+message sns_sar_data
+{
+  repeated float sar = 1 [(nanopb).max_count = 3];
+  required sns_std_sensor_sample_status accuracy = 2;
+}

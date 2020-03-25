@@ -1,0 +1,18 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+import "sns_physical_sensor_test.proto";
+enum sns_hall_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_HALL_MSGID_SNS_HALL_EVENT  = 770;
+}
+enum sns_hall_event_type {
+  option (nanopb_enumopt).long_names = false;
+  SNS_HALL_EVENT_TYPE_FAR = 0;
+  SNS_HALL_EVENT_TYPE_NEAR  = 1;
+}
+message sns_hall_event
+{
+  required sns_hall_event_type hall_event_type = 1 [default = SNS_HALL_EVENT_TYPE_FAR];
+  required sns_std_sensor_sample_status status = 2 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+}

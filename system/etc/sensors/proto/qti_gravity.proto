@@ -1,0 +1,20 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_gravity.proto";
+enum qti_gravity_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  QTI_GRAVITY_MSGID_QTI_GRAVITY_MOTION_DATA_EVENT = 1029;
+}
+enum qti_gravity_device_motion_state
+{
+  option (nanopb_enumopt).long_names = false;
+  QTI_GRAVITY_DEVICE_MOTION_STATE_UNKNOWN = 0;
+  QTI_GRAVITY_DEVICE_MOTION_STATE_ABS_REST = 1;
+  QTI_GRAVITY_DEVICE_MOTION_STATE_REL_REST = 2;
+  QTI_GRAVITY_DEVICE_MOTION_STATE_MOTION = 3;
+}
+message qti_gravity_motion_data_event
+{
+  required qti_gravity_device_motion_state device_motion_state = 1 [default=QTI_GRAVITY_DEVICE_MOTION_STATE_UNKNOWN];
+}

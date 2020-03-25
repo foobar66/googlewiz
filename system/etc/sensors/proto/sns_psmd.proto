@@ -1,0 +1,19 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_psmd_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PSMD_MSGID_SNS_PSMD_CONFIG = 512;
+  SNS_PSMD_MSGID_SNS_PSMD_EVENT = 768;
+}
+enum sns_psmd_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PSMD_TYPE_STATIONARY = 0;
+  SNS_PSMD_TYPE_MOTION = 1;
+}
+message sns_psmd_config
+{
+  required sns_psmd_type type = 1;
+}

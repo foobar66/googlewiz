@@ -1,0 +1,16 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_pedometer_wrist_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_PEDOMETER_WRIST_MSGID_SNS_PEDOMETER_STEP_EVENT = 1028;
+  SNS_PEDOMETER_WRIST_MSGID_SNS_PEDOMETER_STEP_EVENT_CONFIG = 775;
+}
+message sns_pedometer_step_event
+{
+  required uint32 step_count = 1;
+}
+message sns_pedometer_step_event_config
+{
+  required uint32 step_count = 1;
+}

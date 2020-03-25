@@ -1,0 +1,17 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_cal_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_CAL_MSGID_SNS_CAL_RESET =  512;
+  SNS_CAL_MSGID_SNS_CAL_EVENT = 1022;
+}
+message sns_cal_event
+{
+  repeated float bias = 1;
+  repeated float scale_factor = 2;
+  repeated float comp_matrix = 3;
+  required sns_std_sensor_sample_status status = 4 [default = SNS_STD_SENSOR_SAMPLE_STATUS_UNRELIABLE];
+  optional fixed32 cal_id = 5;
+}

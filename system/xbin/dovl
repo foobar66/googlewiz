@@ -1,0 +1,13 @@
+#!/system/bin/sh
+
+CMD=/system/bin/cmd
+PROP=/system/bin/getprop
+CNT=0
+
+# disable all overlays
+for o in `$CMD overlay list | grep '\[x\]' | awk '{print $2}' | grep -v cmcc | grep -v cutout`; do
+    echo "-- disable overlay $o"
+    $CMD overlay disable $o
+    CNT=$(( $CNT + 1 ))
+done
+echo "-- $CNT overlays were disabled"

@@ -1,0 +1,7 @@
+#!/system/bin/sh
+
+CMD=/system/bin/cmd
+
+$CMD overlay enable com.android.systemui.statusbars.PixelBlack
+$CMD overlay enable com.android.systemui.tiles.PixelBlack               
+$CMD overlay enable overlay.tiles.QSTiles5Col4Rows

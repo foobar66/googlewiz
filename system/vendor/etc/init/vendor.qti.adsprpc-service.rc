@@ -1,0 +1,12 @@
+service vendor.adsprpcd /vendor/bin/adsprpcd
+   class main
+   user system
+   group media
+service vendor.adsprpcd_audiopd /vendor/bin/adsprpcd audiopd
+   class main
+   user media
+   group media
+service vendor.cdsprpcd /vendor/bin/cdsprpcd
+   class main
+   user system
+   group system

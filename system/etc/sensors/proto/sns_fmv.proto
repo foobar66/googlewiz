@@ -1,0 +1,2 @@
+syntax = "proto2";
+import "sns_std_sensor.proto";

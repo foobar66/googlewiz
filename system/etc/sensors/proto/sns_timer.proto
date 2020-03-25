@@ -1,0 +1,52 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_timer_sensor_timeout
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_TIMER_SENSOR_TIMEOUT_MIN_TIMEOUT_NANOSEC = 100000;
+}
+enum sns_timer_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_TIMER_MSGID_SNS_TIMER_SENSOR_CONFIG = 512;
+  SNS_TIMER_MSGID_SNS_TIMER_SENSOR_EVENT  = 1025;
+  SNS_TIMER_MSGID_SNS_TIMER_SENSOR_REG_EVENT = 1026;
+}
+enum sns_timer_priority {
+  option (nanopb_enumopt).long_names = false;
+  SNS_TIMER_PRIORITY_LOWEST  = 0;
+  SNS_TIMER_PRIORITY_OTHER   = 10;
+  SNS_TIMER_PRIORITY_POLLING = 50;
+  SNS_TIMER_PRIORITY_S4S     = 100;
+}
+message sns_timer_sensor_config
+{
+  required uint64 start_time = 1;
+  required uint64 timeout_period = 2;
+  required bool is_periodic = 3;
+  message start_config_message {
+    required uint32 early_start_delta = 1;
+    required uint32 late_start_delta = 2;
+  }
+  optional start_config_message start_config = 4;
+  message timeout_config_message {
+    required uint32 low_timeout_delta = 1;
+    required uint32 high_timeout_delta = 2;
+    optional uint32 jitter_ticks = 3;
+  }
+  optional timeout_config_message timeout_config = 5;
+  optional bool is_dry_run = 6 [default = false];
+  optional sns_timer_priority priority = 7 [default = SNS_TIMER_PRIORITY_OTHER];
+}
+message sns_timer_sensor_event
+{
+  required uint64 requested_timeout_time = 1;
+  required uint64 timeout_time = 2;
+}
+message sns_timer_sensor_reg_event
+{
+  required uint64             start_time     = 1;
+  required uint64             timeout_period = 2;
+  required bool               is_periodic    = 3;
+  required bool               is_dry_run     = 4;
+  required sns_timer_priority priority       = 5;
+}

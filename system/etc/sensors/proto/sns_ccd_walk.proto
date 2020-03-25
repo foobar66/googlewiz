@@ -1,0 +1,7 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_ccd_walk_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_CCD_WALK_MSGID_SNS_CCD_WALK_EVENT = 773;
+}

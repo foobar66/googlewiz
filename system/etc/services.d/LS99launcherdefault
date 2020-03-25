@@ -1,0 +1,10 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+waitforsdcard $LOGFILE
+
+echo "-- setting default launcher" | tee -a $LOGFILE
+/system/bin/cmd package set-home-activity com.teslacoilsw.launcher/.NovaLauncher

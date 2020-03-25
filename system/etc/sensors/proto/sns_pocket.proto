@@ -1,0 +1,13 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_pocket_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_POCKET_MSGID_SNS_POCKET_DATA = 1027;
+}
+message sns_pocket_data
+{
+  repeated float pocket = 1 [(nanopb).max_count = 3];
+  required sns_std_sensor_sample_status accuracy = 2;
+}

@@ -1,0 +1,106 @@
+#!/system/xbin/bash
+
+display_usage() { 
+	echo "usage: copyflash _a _b ($1)"
+} 
+
+if [  $# -ne 2 ] 
+	then 
+		display_usage "needs 2 arguments"
+		exit 1
+fi
+
+if [[ "$1" != "_a" && "$1" != "_b" ]]; then
+    display_usage "first argument must be _a or _b"
+    exit 1
+fi
+
+if [[ "$2" != "_a" && "$2" != "_b" ]]; then
+    display_usage "second argument must be _a or _b"
+    exit 1
+fi
+
+if [[ "$1" == "$2" ]]; then
+    display_usage "first and second argument cannot be equal"
+    exit 1
+fi
+
+echo "dd if=/dev/block/bootdevice/by-name/abl$1 of=/dev/block/bootdevice/by-name/abl$2"
+dd if=/dev/block/bootdevice/by-name/abl$1 of=/dev/block/bootdevice/by-name/abl$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/aop$1 of=/dev/block/bootdevice/by-name/aop$2"
+dd if=/dev/block/bootdevice/by-name/aop$1 of=/dev/block/bootdevice/by-name/aop$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/bluetooth$1 of=/dev/block/bootdevice/by-name/bluetooth$2"
+dd if=/dev/block/bootdevice/by-name/bluetooth$1 of=/dev/block/bootdevice/by-name/bluetooth$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/boot$1 of=/dev/block/bootdevice/by-name/boot$2 bs=1M"
+dd if=/dev/block/bootdevice/by-name/boot$1 of=/dev/block/bootdevice/by-name/boot$2 bs=1M 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/cmnlib64$1 of=/dev/block/bootdevice/by-name/cmnlib64$2"
+dd if=/dev/block/bootdevice/by-name/cmnlib64$1 of=/dev/block/bootdevice/by-name/cmnlib64$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/cmnlib$1 of=/dev/block/bootdevice/by-name/cmnlib$2"
+dd if=/dev/block/bootdevice/by-name/cmnlib$1 of=/dev/block/bootdevice/by-name/cmnlib$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/devcfg$1 of=/dev/block/bootdevice/by-name/devcfg$2"
+dd if=/dev/block/bootdevice/by-name/devcfg$1 of=/dev/block/bootdevice/by-name/devcfg$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/dsp$1 of=/dev/block/bootdevice/by-name/dsp$2"
+dd if=/dev/block/bootdevice/by-name/dsp$1 of=/dev/block/bootdevice/by-name/dsp$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/dtbo$1 of=/dev/block/bootdevice/by-name/dtbo$2"
+dd if=/dev/block/bootdevice/by-name/dtbo$1 of=/dev/block/bootdevice/by-name/dtbo$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/fw_4j1ed$1 of=/dev/block/bootdevice/by-name/fw_4j1ed$2"
+dd if=/dev/block/bootdevice/by-name/fw_4j1ed$1 of=/dev/block/bootdevice/by-name/fw_4j1ed$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/fw_4u1ea$1 of=/dev/block/bootdevice/by-name/fw_4u1ea$2"
+dd if=/dev/block/bootdevice/by-name/fw_4u1ea$1 of=/dev/block/bootdevice/by-name/fw_4u1ea$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/fw_ufs3$1 of=/dev/block/bootdevice/by-name/fw_ufs3$2"
+dd if=/dev/block/bootdevice/by-name/fw_ufs3$1 of=/dev/block/bootdevice/by-name/fw_ufs3$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/fw_ufs4$1 of=/dev/block/bootdevice/by-name/fw_ufs4$2"
+dd if=/dev/block/bootdevice/by-name/fw_ufs4$1 of=/dev/block/bootdevice/by-name/fw_ufs4$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/fw_ufs5$1 of=/dev/block/bootdevice/by-name/fw_ufs5$2"
+dd if=/dev/block/bootdevice/by-name/fw_ufs5$1 of=/dev/block/bootdevice/by-name/fw_ufs5$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/hyp$1 of=/dev/block/bootdevice/by-name/hyp$2"
+dd if=/dev/block/bootdevice/by-name/hyp$1 of=/dev/block/bootdevice/by-name/hyp$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/keymaster$1 of=/dev/block/bootdevice/by-name/keymaster$2"
+dd if=/dev/block/bootdevice/by-name/keymaster$1 of=/dev/block/bootdevice/by-name/keymaster$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/modem$1 of=/dev/block/bootdevice/by-name/modem$2"
+dd if=/dev/block/bootdevice/by-name/modem$1 of=/dev/block/bootdevice/by-name/modem$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/oem_stanvbk$1 of=/dev/block/bootdevice/by-name/oem_stanvbk$2"
+dd if=/dev/block/bootdevice/by-name/oem_stanvbk$1 of=/dev/block/bootdevice/by-name/oem_stanvbk$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/qupfw$1 of=/dev/block/bootdevice/by-name/qupfw$2"
+dd if=/dev/block/bootdevice/by-name/qupfw$1 of=/dev/block/bootdevice/by-name/qupfw$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/storsec$1 of=/dev/block/bootdevice/by-name/storsec$2"
+dd if=/dev/block/bootdevice/by-name/storsec$1 of=/dev/block/bootdevice/by-name/storsec$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/system$1 of=/dev/block/bootdevice/by-name/system$2 bs=16m"
+dd if=/dev/block/bootdevice/by-name/system$1 of=/dev/block/bootdevice/by-name/system$2 bs=16m 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/tz$1 of=/dev/block/bootdevice/by-name/tz$2"
+dd if=/dev/block/bootdevice/by-name/tz$1 of=/dev/block/bootdevice/by-name/tz$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/vbmeta$1 of=/dev/block/bootdevice/by-name/vbmeta$2"
+dd if=/dev/block/bootdevice/by-name/vbmeta$1 of=/dev/block/bootdevice/by-name/vbmeta$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/vendor$1 of=/dev/block/bootdevice/by-name/vendor$2 bs=4m"
+dd if=/dev/block/bootdevice/by-name/vendor$1 of=/dev/block/bootdevice/by-name/vendor$2 bs=4m 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/xbl_config$1 of=/dev/block/bootdevice/by-name/xbl_config$2"
+dd if=/dev/block/bootdevice/by-name/xbl_config$1 of=/dev/block/bootdevice/by-name/xbl_config$2 2> /dev/null
+
+echo "dd if=/dev/block/bootdevice/by-name/xbl$1 of=/dev/block/bootdevice/by-name/xbl$2"
+dd if=/dev/block/bootdevice/by-name/xbl$1 of=/dev/block/bootdevice/by-name/xbl$2 2> /dev/null
+
+exit 0

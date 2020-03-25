@@ -1,0 +1,87 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_type.proto";
+import "sns_interrupt.proto";
+import "sns_async_com_port.proto";
+enum sns_dae_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_DAE_MSGID_SNS_DAE_SET_STATIC_CONFIG    = 600;
+  SNS_DAE_MSGID_SNS_DAE_S4S_DYNAMIC_CONFIG   = 601;
+  SNS_DAE_MSGID_SNS_DAE_SET_STREAMING_CONFIG = 602;
+  SNS_DAE_MSGID_SNS_DAE_FLUSH_HW             = 603;
+  SNS_DAE_MSGID_SNS_DAE_FLUSH_DATA_EVENTS    = 604;
+  SNS_DAE_MSGID_SNS_DAE_PAUSE_SAMPLING       = 605;
+  SNS_DAE_MSGID_SNS_DAE_PAUSE_S4S_SCHED      = 606;
+  SNS_DAE_MSGID_SNS_DAE_RESP                 = 800;
+  SNS_DAE_MSGID_SNS_DAE_DATA_EVENT           = 1200;
+  SNS_DAE_MSGID_SNS_DAE_INTERRUPT_EVENT      = 1201;
+}
+enum sns_dae_timestamp_type {
+  SNS_DAE_TIMESTAMP_TYPE_UNKNOWN = 0;
+  SNS_DAE_TIMESTAMP_TYPE_HW_IRQ = 1;
+  SNS_DAE_TIMESTAMP_TYPE_SW_IRQ = 2;
+  SNS_DAE_TIMESTAMP_TYPE_TIMER = 3;
+  SNS_DAE_TIMESTAMP_TYPE_SYSTEM_TIME = 4;
+}
+message sns_s4s_static_info {
+  required int32   st_reg_addr = 1;
+  optional int32   st_reg_data = 2;
+  required int32   dt_reg_addr = 3;
+}
+message sensor_to_phone_conversion {
+  required uint32 ipaxis = 1;
+  required uint32 opaxis = 2;
+  required bool invert = 3;
+}
+message sns_accel_static_info {
+  repeated float offset_cal = 1 [(nanopb).max_count = 3, deprecated = true];
+  repeated float scale_cal = 2[(nanopb).max_count = 3, deprecated = true];
+  required int32 accel_range = 3;
+  repeated sensor_to_phone_conversion axis_map = 4 [(nanopb).max_count = 3];
+}
+message sns_accel_dynamic_info {
+  required float odr = 1;
+  required uint32 num_initial_invalid_samples = 2;
+  repeated float offset_cal = 3 [(nanopb).max_count = 3];
+  repeated float scale_cal = 4 [(nanopb).max_count = 3];
+}
+message sns_polling_config_info {
+  required fixed64 polling_offset = 1;
+  required fixed64 polling_interval_ticks = 2;
+}
+message sns_dae_set_static_config {
+  required string func_table_name = 1 [(nanopb).max_size = 32];
+  required int32 interrupt = 2;
+  repeated int32           axis_map = 3 [(nanopb).max_count = 3, deprecated = true];
+  optional sns_interrupt_req     irq_config = 4;
+  optional sns_ibi_req           ibi_config = 8;
+  optional sns_s4s_static_info s4s_config = 5;
+  required sns_async_com_port_config ascp_config = 6;
+  optional sns_accel_static_info accel_info = 7;
+}
+message sns_dae_s4s_dynamic_config {
+  required fixed64 ideal_sync_offset = 1;
+  required fixed64 sync_interval = 2;
+  required int32  resolution_ratio = 3;
+  required int32  st_delay = 4;
+}
+message sns_dae_set_streaming_config {
+  required uint32 dae_watermark = 1;
+  optional fixed64 data_age_limit_ticks = 2;
+  optional sns_polling_config_info polling_config = 3;
+  optional sns_accel_dynamic_info accel_info = 4;
+  optional uint32 expected_get_data_bytes = 5;
+}
+message sns_dae_resp {
+  required int32              msg_id = 1;
+  required sns_std_error      err    = 2;
+}
+message sns_dae_data_event {
+  required fixed64 timestamp = 1;
+  optional sns_dae_timestamp_type timestamp_type = 3;
+  required bytes  sensor_data = 2;
+}
+message sns_dae_interrupt_event {
+  required fixed64 timestamp = 1;
+  required bytes registers = 2 [(nanopb).max_size = 8];
+}

@@ -1,0 +1,34 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_printf_ap_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PRINTF_AP_EVENT_MSGID_REQUEST = 2049;
+  SNS_PRINTF_AP_EVENT_MSGID_LOG_EVENT = 2050;
+  SNS_PRINTF_AP_EVENT_MSGID_LITE_EVENT = 2051;
+}
+enum sns_printf_ap_prio{
+  PRINTF_AP_PRIO_LOW   = 0;
+  PRINTF_AP_PRIO_MED   = 1;
+  PRINTF_AP_PRIO_HIGH  = 2;
+  PRINTF_AP_PRIO_ERROR = 3;
+  PRINTF_AP_PRIO_FATAL = 4;
+}
+message sns_printf_ap_request{
+  required sns_printf_ap_prio min_prio = 1;
+  optional string keyword = 2;
+  repeated string sensors = 3;
+}
+message sns_printf_ap_event{
+  required sns_printf_ap_prio prio = 1;
+  optional string file = 2;
+  optional uint32 line = 3;
+  required string format = 4;
+  required bytes args = 5;
+}
+message sns_printf_ap_lite_event{
+  required string name = 1;
+  required uint32 msgid = 2;
+  optional string str = 3;
+  repeated float args = 4;
+}

@@ -1,0 +1,26 @@
+syntax = "proto2";
+import "nanopb.proto";
+enum sns_physical_sensor_test_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PHYSICAL_SENSOR_TEST_MSGID_SNS_PHYSICAL_SENSOR_TEST_CONFIG = 515;
+  SNS_PHYSICAL_SENSOR_TEST_MSGID_SNS_PHYSICAL_SENSOR_TEST_EVENT  = 1026;
+}
+enum sns_physical_sensor_test_type
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_PHYSICAL_SENSOR_TEST_TYPE_SW = 0;
+  SNS_PHYSICAL_SENSOR_TEST_TYPE_HW = 1;
+  SNS_PHYSICAL_SENSOR_TEST_TYPE_FACTORY = 2;
+  SNS_PHYSICAL_SENSOR_TEST_TYPE_COM = 3;
+}
+message sns_physical_sensor_test_config
+{
+  required sns_physical_sensor_test_type test_type = 1;
+}
+message sns_physical_sensor_test_event
+{
+  required bool test_passed = 1 [default = true];
+  required sns_physical_sensor_test_type test_type = 2 [default = SNS_PHYSICAL_SENSOR_TEST_TYPE_COM];
+  optional bytes test_data = 3;
+}

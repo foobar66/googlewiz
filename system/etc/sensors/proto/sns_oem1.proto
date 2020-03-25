@@ -1,0 +1,13 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_oem1_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_OEM1_MSGID_SNS_OEM1_DATA = 1024;
+}
+message sns_oem1_data
+{
+  repeated float oem1 = 1 [(nanopb).max_count = 3];
+  required sns_std_sensor_sample_status accuracy = 2;
+}

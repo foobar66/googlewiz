@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><Included><Decoders><MediaCodec name="OMX.google.opus.decoder" type="audio/opus" update="true" rank="100"/><MediaCodec name="OMX.qti.audio.decoder.flac" type="audio/flac" rank="0"><Limit name="concurrent-instances" max="10"/></MediaCodec></Decoders><Include href="media_codecs_dolby_audio.xml"/></Included>

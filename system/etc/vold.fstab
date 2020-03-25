@@ -1,0 +1,1 @@
+dev_mount sdcard /storage/sdcard1 auto /devices/msm_sdcc.2/mmc_host

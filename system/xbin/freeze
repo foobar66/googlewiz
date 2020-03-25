@@ -1,0 +1,235 @@
+#!/system/bin/sh
+
+display_usage() { 
+	echo "usage: freeze enable|disable ($1)"
+} 
+
+if [[ $# -ne 1 ]]; then 
+		display_usage "needs 1 argument"
+		exit 1
+fi
+
+if [[ "$1" != "enable" && "$1" != "disable" ]]; then
+    display_usage "first argument must be 'enable' or 'disable'"
+    exit 1
+fi
+
+pm $1 com.oneplus.brickmode 2>/dev/null
+pm $1 com.oneplus.gallery 2>/dev/null
+
+#============================================================
+
+# for below we only use the basiccolorblack overlays
+
+pm $1 com.oneplus.aod.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.settings.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.phone.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.server.telecom.basiccolorwhite.overlay 2>/dev/null
+
+#============================================================
+
+# below are copied from /sdcard/FrozenPackages.xml
+
+pm $1 android.autoinstalls.config.oneplus 2>/dev/null
+pm $1 cn.oneplus.nvbackup 2>/dev/null
+pm $1 cn.oneplus.oemtcma 2>/dev/null
+pm $1 cn.oneplus.opmms 2>/dev/null
+pm $1 cn.oneplus.photos 2>/dev/null
+pm $1 com.android.backup 2>/dev/null
+pm $1 com.android.bips 2>/dev/null
+pm $1 com.android.bluetoothmidiservice 2>/dev/null
+pm $1 com.android.bookmarkprovider 2>/dev/null
+pm $1 com.android.carrierconfig 2>/dev/null
+pm $1 com.android.carrierdefaultapp 2>/dev/null
+pm $1 com.android.cellbroadcastreceiver.basiccolorblack.overlay 2>/dev/null
+pm $1 com.android.cellbroadcastreceiver.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.cellbroadcastreceiver.overlay.common 2>/dev/null
+pm $1 com.android.companiondevicemanager 2>/dev/null
+pm $1 com.android.cts.ctsshim 2>/dev/null
+pm $1 com.android.dialer.basiccolorblack.overlay 2>/dev/null
+pm $1 com.android.dialer.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.dreams.basic 2>/dev/null
+pm $1 com.android.dynsystem 2>/dev/null
+pm $1 com.android.egg 2>/dev/null
+pm $1 com.android.emergency.basiccolorblack.overlay 2>/dev/null
+pm $1 com.android.emergency.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.android.htmlviewer 2>/dev/null
+pm $1 com.android.internal.display.cutout.emulation.corner 2>/dev/null
+pm $1 com.android.internal.display.cutout.emulation.double 2>/dev/null
+pm $1 com.android.internal.display.cutout.emulation.tall 2>/dev/null
+pm $1 com.android.internal.systemui.navbar.threebutton 2>/dev/null
+pm $1 com.android.internal.systemui.navbar.twobutton 2>/dev/null
+pm $1 com.android.mms.overlay.cmcc 2>/dev/null
+pm $1 com.android.mms.overlay.ct 2>/dev/null
+pm $1 com.android.pacprocessor 2>/dev/null
+pm $1 com.android.providers.partnerbookmarks 2>/dev/null
+pm $1 com.android.simappdialog 2>/dev/null
+pm $1 com.android.smspush 2>/dev/null
+pm $1 com.android.storagemanager 2>/dev/null
+pm $1 com.android.theme.color.black 2>/dev/null
+pm $1 com.android.theme.color.cinnamon 2>/dev/null
+pm $1 com.android.theme.color.green 2>/dev/null
+pm $1 com.android.theme.color.ocean 2>/dev/null
+pm $1 com.android.theme.color.orchid 2>/dev/null
+pm $1 com.android.theme.color.purple 2>/dev/null
+pm $1 com.android.theme.color.space 2>/dev/null
+pm $1 com.android.theme.font.notoserifsource 2>/dev/null
+pm $1 com.android.theme.icon.circle 2>/dev/null
+pm $1 com.android.theme.icon.roundedrect 2>/dev/null
+pm $1 com.android.theme.icon.square 2>/dev/null
+pm $1 com.android.theme.icon.squircle 2>/dev/null
+pm $1 com.android.theme.icon.teardrop 2>/dev/null
+pm $1 com.android.theme.icon_pack.circular.android 2>/dev/null
+pm $1 com.android.theme.icon_pack.circular.launcher 2>/dev/null
+pm $1 com.android.theme.icon_pack.circular.settings 2>/dev/null
+pm $1 com.android.theme.icon_pack.circular.systemui 2>/dev/null
+pm $1 com.android.theme.icon_pack.circular.themepicker 2>/dev/null
+pm $1 com.android.theme.icon_pack.filled.android 2>/dev/null
+pm $1 com.android.theme.icon_pack.filled.launcher 2>/dev/null
+pm $1 com.android.theme.icon_pack.filled.settings 2>/dev/null
+pm $1 com.android.theme.icon_pack.filled.systemui 2>/dev/null
+pm $1 com.android.theme.icon_pack.filled.themepicker 2>/dev/null
+pm $1 com.android.theme.icon_pack.rounded.android 2>/dev/null
+pm $1 com.android.theme.icon_pack.rounded.launcher 2>/dev/null
+pm $1 com.android.theme.icon_pack.rounded.settings 2>/dev/null
+pm $1 com.android.theme.icon_pack.rounded.systemui 2>/dev/null
+pm $1 com.android.traceur 2>/dev/null
+pm $1 com.android.wallpaper.livepicker 2>/dev/null
+pm $1 com.android.wallpaperbackup 2>/dev/null
+pm $1 com.android.wallpapercropper 2>/dev/null
+pm $1 com.dolby.daxservice 2>/dev/null
+pm $1 com.dsi.ant.server 2>/dev/null
+pm $1 com.example.tmo 2>/dev/null
+pm $1 com.example.wifirftest 2>/dev/null
+pm $1 com.fingerprints.fingerprintsensortest 2>/dev/null
+pm $1 com.google.android.apps.restore 2>/dev/null
+pm $1 com.google.android.apps.tachyon 2>/dev/null
+pm $1 com.google.android.configupdater 2>/dev/null
+pm $1 com.google.android.feedback 2>/dev/null
+pm $1 com.google.android.gms.location.history 2>/dev/null
+pm $1 com.google.android.marvin.talkback 2>/dev/null
+pm $1 com.google.android.music 2>/dev/null
+pm $1 com.google.android.partnersetup 2>/dev/null
+pm $1 com.google.android.printservice.recommendation 2>/dev/null
+pm $1 com.google.android.videos 2>/dev/null
+pm $1 com.microsoft.office.excel 2>/dev/null
+pm $1 com.microsoft.office.powerpoint 2>/dev/null
+pm $1 com.microsoft.office.word 2>/dev/null
+pm $1 com.oem.autotest 2>/dev/null
+pm $1 com.oem.logkitsdservice 2>/dev/null
+pm $1 com.oem.nfc 2>/dev/null
+pm $1 com.oem.oemlogkit 2>/dev/null
+pm $1 com.oem.rftoolkit 2>/dev/null
+pm $1 com.oneplus.account 2>/dev/null
+pm $1 com.oneplus.account.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.account.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.aodnotification.overlay.gold 2>/dev/null
+pm $1 com.oneplus.aodnotification.overlay.purple 2>/dev/null
+pm $1 com.oneplus.aodnotification.overlay.red 2>/dev/null
+pm $1 com.oneplus.applocker 2>/dev/null
+pm $1 com.oneplus.appupgrader 2>/dev/null
+pm $1 com.oneplus.asti 2>/dev/null
+pm $1 com.oneplus.backuprestore 2>/dev/null
+pm $1 com.oneplus.backuprestore.remoteservice 2>/dev/null
+pm $1 com.oneplus.brickmode 2>/dev/null
+pm $1 com.oneplus.bttestmode 2>/dev/null
+pm $1 com.oneplus.calculator 2>/dev/null
+pm $1 com.oneplus.calculator.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.calendar.black.overlay 2>/dev/null
+pm $1 com.oneplus.calendar.white.overlay 2>/dev/null
+pm $1 com.oneplus.card 2>/dev/null
+pm $1 com.oneplus.card.black.overlay 2>/dev/null
+pm $1 com.oneplus.card.white.overlay 2>/dev/null
+pm $1 com.oneplus.carrierlocation 2>/dev/null
+pm $1 com.oneplus.cloud.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.cloud.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.contacts.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.contacts.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.deskclock 2>/dev/null
+pm $1 com.oneplus.deskclock.black.overlay 2>/dev/null
+pm $1 com.oneplus.deskclock.white.overlay 2>/dev/null
+pm $1 com.oneplus.diagnosemanager 2>/dev/null
+pm $1 com.oneplus.factorymode 2>/dev/null
+pm $1 com.oneplus.factorymode.specialtest 2>/dev/null
+pm $1 com.oneplus.filemanager 2>/dev/null
+pm $1 com.oneplus.filemanager.black.overlay 2>/dev/null
+pm $1 com.oneplus.filemanager.white.overlay 2>/dev/null
+pm $1 com.oneplus.gamespace 2>/dev/null
+pm $1 com.oneplus.gamespace.black.overlay 2>/dev/null
+pm $1 com.oneplus.gamespace.white.overlay 2>/dev/null
+pm $1 com.oneplus.geoiptime 2>/dev/null
+pm $1 com.oneplus.iconpack.circle 2>/dev/null
+pm $1 com.oneplus.iconpack.onepluso2 2>/dev/null
+pm $1 com.oneplus.iconpack.square 2>/dev/null
+pm $1 com.oneplus.mms.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.mms.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.note 2>/dev/null
+pm $1 com.oneplus.note.black.overlay 2>/dev/null
+pm $1 com.oneplus.note.white.overlay 2>/dev/null
+pm $1 com.oneplus.opbackup 2>/dev/null
+pm $1 com.oneplus.opbackup.black.overlay 2>/dev/null
+pm $1 com.oneplus.opbackup.white.overlay 2>/dev/null
+pm $1 com.oneplus.opbugreportlite 2>/dev/null
+pm $1 com.oneplus.screenrecord 2>/dev/null
+pm $1 com.oneplus.screenrecord.black.overlay 2>/dev/null
+pm $1 com.oneplus.screenrecord.white.overlay 2>/dev/null
+pm $1 com.oneplus.sdcardservice 2>/dev/null
+pm $1 com.oneplus.ses 2>/dev/null
+pm $1 com.oneplus.simcontacts.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.simcontacts.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.sms.smscplugger 2>/dev/null
+pm $1 com.oneplus.sound.tuner 2>/dev/null
+pm $1 com.oneplus.sound.tuner.basiccolorblack.overlay 2>/dev/null
+pm $1 com.oneplus.sound.tuner.basiccolorwhite.overlay 2>/dev/null
+pm $1 com.oneplus.soundrecorder 2>/dev/null
+pm $1 com.oneplus.soundrecorder.black.overlay 2>/dev/null
+pm $1 com.oneplus.soundrecorder.white.overlay 2>/dev/null
+pm $1 com.oneplus.wallpaper 2>/dev/null
+pm $1 com.qti.confuridialer 2>/dev/null
+pm $1 com.qti.dpmserviceapp 2>/dev/null
+pm $1 com.qti.ltebc 2>/dev/null
+pm $1 com.qti.pasrservice 2>/dev/null
+pm $1 com.qti.qualcomm.datastatusnotification 2>/dev/null
+pm $1 com.qti.qualcomm.deviceinfo 2>/dev/null
+pm $1 com.qti.service.colorservice 2>/dev/null
+pm $1 com.qti.snapdragon.qdcm_ff 2>/dev/null
+pm $1 com.qualcomm.embms 2>/dev/null
+pm $1 com.qualcomm.qti.callfeaturessetting 2>/dev/null
+pm $1 com.qualcomm.qti.cne 2>/dev/null
+pm $1 com.qualcomm.qti.dynamicddsservice 2>/dev/null
+pm $1 com.qualcomm.qti.improvetouch.service 2>/dev/null
+pm $1 com.qualcomm.qti.ims 2>/dev/null
+pm $1 com.qualcomm.qti.lpa 2>/dev/null
+pm $1 com.qualcomm.qti.optinoverlay 2>/dev/null
+pm $1 com.qualcomm.qti.performancemode 2>/dev/null
+pm $1 com.qualcomm.qti.poweroffalarm 2>/dev/null
+pm $1 com.qualcomm.qti.qcolor 2>/dev/null
+pm $1 com.qualcomm.qti.remoteSimlockAuth 2>/dev/null
+pm $1 com.qualcomm.qti.seccamservice 2>/dev/null
+pm $1 com.qualcomm.qti.services.secureui 2>/dev/null
+pm $1 com.qualcomm.qti.simsettings 2>/dev/null
+pm $1 com.qualcomm.qti.uceShimService 2>/dev/null
+pm $1 com.qualcomm.qti.uim 2>/dev/null
+pm $1 com.qualcomm.qti.uimGbaApp 2>/dev/null
+pm $1 com.qualcomm.uimremoteclient 2>/dev/null
+pm $1 com.qualcomm.uimremoteserver 2>/dev/null
+pm $1 com.tencent.soter.soterserver 2>/dev/null
+pm $1 com.wapi.wapicertmanage 2>/dev/null
+pm $1 net.oneplus.commonlogtool 2>/dev/null
+pm $1 net.oneplus.launcher.SwiftBlack.OxygenOS 2>/dev/null
+pm $1 net.oneplus.launcher.black.overlay 2>/dev/null
+pm $1 net.oneplus.launcher.white.overlay 2>/dev/null
+pm $1 net.oneplus.push 2>/dev/null
+pm $1 net.oneplus.wallpaperresources 2>/dev/null
+pm $1 net.oneplus.weather 2>/dev/null
+pm $1 net.oneplus.weather.basiccolorblack.overlay 2>/dev/null
+pm $1 net.oneplus.weather.basiccolorwhite.overlay 2>/dev/null
+pm $1 net.oneplus.widget 2>/dev/null
+pm $1 org.codeaurora.ims 2>/dev/null
+pm $1 vendor.qti.hardware.cacert.server 2>/dev/null
+pm $1 vendor.qti.iwlan 2>/dev/null
+
+pm $1 com.oneplus.opsports.black.overlay 2>/dev/null
+pm $1 com.oneplus.opsports.white.overlay 2>/dev/null
+pm $1 com.oneplus.opwlb.black.overlay 2>/dev/null
+pm $1 com.oneplus.opwlb.white.overlay 2>/dev/null

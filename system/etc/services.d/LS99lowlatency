@@ -1,0 +1,27 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+# The prefer_idle flag reflects the desire
+# for low-latency activation, possibly at the expense of
+# increased energy consumption. Tasks
+# belonging to boostgroups having this flag set are allocated
+# (if available) on an idle CPU
+
+# Not sure if this has any effect if kernel does not support it
+
+echo "-- applying low-latency activation on idle CPU" | tee -a $LOGFILE
+sysset 0 /dev/stune/schedtune.prefer_idle
+sysset 0 /dev/stune/top-app/schedtune.prefer_idle
+sysset 0 /dev/stune/foreground/schedtune.prefer_idle
+sysset 0 /dev/stune/background/schedtune.prefer_idle
+sysset 0 /dev/stune/rt/schedtune.prefer_idle
+
+echo "-- disabling colocation for cgroups" | tee -a $LOGFILE
+sysset 0 /dev/stune/schedtune.colocate
+sysset 0 /dev/stune/top-app/schedtune.colocate
+sysset 0 /dev/stune/foreground/schedtune.colocate
+sysset 0 /dev/stune/background/schedtune.colocate
+sysset 0 /dev/stune/rt/schedtune.colocate

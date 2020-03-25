@@ -1,0 +1,20 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_facing_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_FACING_MSGID_SNS_FACING_EVENT = 1024;
+}
+enum sns_facing_event_state
+{   
+  option (nanopb_enumopt).long_names = false;
+  SNS_FACING_EVENT_STATE_UNKNOWN = 0;
+  SNS_FACING_EVENT_STATE_UP = 1;
+  SNS_FACING_EVENT_STATE_DOWN = 2;
+  SNS_FACING_EVENT_STATE_NEUTRAL = 3;
+}
+message sns_facing_event
+{ 
+ required sns_facing_event_state state = 1[default = SNS_FACING_EVENT_STATE_UNKNOWN];
+}

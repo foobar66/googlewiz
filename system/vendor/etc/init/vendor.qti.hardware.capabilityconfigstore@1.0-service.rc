@@ -1,0 +1,4 @@
+service vendor.capabilityconfigstore /vendor/bin/hw/vendor.qti.hardware.capabilityconfigstore@1.0-service
+    class hal
+    user system
+    group system

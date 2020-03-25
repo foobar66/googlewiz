@@ -1,0 +1,121 @@
+#!/system/xbin/bash
+
+KEEP=0
+if [ $# -gt 1 ]; then
+    echo "Usage: idiff [keep]"
+    exit 0
+fi
+if [ $# -eq 1 ]; then
+    if [ "$1" != "keep" ]; then
+        echo "Usage: idiff [keep]"
+        exit 0
+    fi
+    KEEP=1
+fi
+
+#if [ `/system/bin/toolbox getprop ro.product.device` = "OnePlus7TPro" ]; then
+#    echo "OnePlus 7T Pro device ... using magisk, not copying anything, just comparing versions"
+#    KEEP=1
+#fi
+
+cd /
+#/system/xbin/sysrw
+
+declare -A dirmap
+
+SAPP=/sbin/.magisk/modules/googlewiz/vendor/app
+
+# we only must have apps here which do NOT come with the OnePlus original ROM
+# these might be upgraded (like Google Calendar) but that is OK
+
+# note: Gmail, Calendar, Drive, Maps, Youtube, Chrome, PlayStore, Photos, Pay, Wellbeing, ARcore, Webview, Duo
+# are part of the original OnePlus ROM
+# we let those update themselves through the normal play store updates (or we update APKs from APKmirror manually)
+# so we do not put our own versions in /sbin/.magisk/modules/googlewiz/vendor/app
+
+dirmap[com.electricsheep.asipro]=$SAPP/MySystemInfo/
+dirmap[com.plusonelabs.calendar]=$SAPP/MyCalendarWidget/
+dirmap[com.teslacoilsw.launcher.prime]=$SAPP/MyLauncherKey/
+dirmap[com.teslacoilsw.launcher]=$SAPP/MyLauncher/
+dirmap[com.teslacoilsw.launcherclientproxy]=$SAPP/MyLauncherCompanion/
+dirmap[com.touchtype.swiftkey]=$SAPP/MySwiftkey/
+dirmap[com.google.android.apps.messaging]=$SAPP/MyGoogleMessaging/
+dirmap[com.google.android.contacts]=$SAPP/MyGoogleContacts/
+dirmap[com.google.android.deskclock]=$SAPP/MyGoogleClock/
+dirmap[com.google.android.dialer]=$SAPP/MyGoogleDialer/
+dirmap[com.google.android.calculator]=$SAPP/MyGoogleCalculator/
+dirmap[com.google.android.apps.googleassistant]=$SAPP/MyGoogleAssistant/
+dirmap[com.google.android.markup]=$SAPP/MyGoogleMarkup/
+dirmap[com.google.android.apps.docs.editors.docs]=$SAPP/MyGoogleDocs/
+dirmap[com.google.android.apps.docs.editors.sheets]=$SAPP/MyGoogleSheets/
+dirmap[com.google.android.apps.docs.editors.slides]=$SAPP/MyGoogleSlides/
+dirmap[com.google.earth]=$SAPP/MyGoogleEarth/
+dirmap[com.google.android.apps.fitness]=$SAPP/MyGoogleFit/
+dirmap[com.google.android.apps.chromecast.app]=$SAPP/MyGoogleHome/
+dirmap[com.google.android.keep]=$SAPP/MyGoogleKeep/
+dirmap[com.google.ar.lens]=$SAPP/MyGoogleLens/
+dirmap[com.google.tango.measure]=$SAPP/MyGoogleMeasure/
+dirmap[com.google.android.apps.magazines]=$SAPP/MyGoogleNews/
+dirmap[com.niksoftware.snapseed]=$SAPP/MyGoogleSnapseed/
+dirmap[com.google.android.street]=$SAPP/MyGoogleStreet/
+dirmap[com.google.android.apps.tasks]=$SAPP/MyGoogleTasks/
+dirmap[com.google.android.apps.translate]=$SAPP/MyGoogleTranslate/
+dirmap[com.google.android.apps.turbo]=$SAPP/MyGoogleTurbo/
+
+#next 2 are part of original ROM from OnePlus, so they will be updated automatically anyway
+#dirmap[com.google.android.projection.gearhead]=$SAPP/MyGoogleAuto/
+#dirmap[com.google.ar.core]=$SAPP/MyGoogleARCore/
+
+# the following do not work correctly
+#dirmap[com.google.android.apps.walletnfcrel]=$SAPP/MyGoogleWallet/
+#dirmap[pl.solidexplorer2]=$SAPP/MyFileManager/
+#dirmap[com.google.android.apps.nbu.files]=$SAPP/MyGoogleFiles/
+
+SAPP=/sbin/.magisk/modules/googlewiz/system/priv-app
+SAPP=/sbin/.magisk/modules/googlewiz/system/product/app
+SAPP=/sbin/.magisk/modules/googlewiz/system/product/priv-app
+SAPP=/sbin/.magisk/modules/googlewiz/system/vendor/app
+
+SIMULATE=false
+
+for pkg in "${!dirmap[@]}"; do
+    # check if there is a directory with this package in /data/app
+    CNT=`ls -l /data/app/ | grep -v Swift | grep "$pkg-"`
+    # if CNT <> "" there is a directory in /data/app meaning that the app was updated
+    VN=`pm dump $pkg | grep versionName | head -n 1 | sed 's/versionName=//g' | awk '{print $1}' | sed 's/ //g'`
+    if [ "$CNT" != "" ]; then
+        # apk changed since there is a directory in /data/app
+        DIR=`echo $CNT | awk '{print $8}'`
+        DEST="${dirmap[$pkg]}"
+
+        echo "- Package $pkg ($VN) has changed"
+        if [ "$KEEP" -eq 0 ]; then
+            if [ -e "$DEST" ]; then
+                if [ "$SIMULATE" = "false" ]; then
+                    rm -rf $DEST/*
+                    echo "   - Copying /data/app/$DIR/ to $DEST"
+                    cp -r /data/app/$DIR/* $DEST
+                    # make sure root is the owner
+                    chown 0.0 $DEST
+                    # directories should have 755 permission, files 644
+                    find $DEST -type d -exec chmod 755 {} \;
+                    find $DEST -type f -exec chmod 644 {} \;
+                    echo "   - Uninstalling $pkg"
+                    pm uninstall -k $pkg > /dev/null
+                    #VN=`pm dump $pkg | grep versionName | head -n 1 | sed 's/versionName=//g' | awk '{print $1}' | sed 's/ //g'`
+                else
+                    echo "** No action taken, SIMULATE=true"
+                fi
+            else
+                echo "   - $DEST does not exist so not copying anything, creating directory, run the script again"
+                mkdir -p $DEST
+                chown -R 0.0 $DEST
+                chmod 755 $DEST
+            fi
+        fi
+    else
+        echo "- Package $pkg ($VN) has NOT changed"
+    fi
+done
+
+#/system/xbin/sysro

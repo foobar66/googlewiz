@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><permissions><library name="com.qti.dpmframework" file="/system/product/framework/com.qti.dpmframework.jar"/><permission name="com.qualcomm.permission.READPROC"><group gid="readproc"/></permission></permissions>

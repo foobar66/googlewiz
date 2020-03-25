@@ -1,0 +1,63 @@
+#!/system/bin/sh
+
+. /etc/init.d/googlewiz.sh
+
+# wait long enough so that the OS threads which set the parameters below have all done their work
+# then we overwrite
+# 10 seconds was not enough
+sleep 15
+
+LOGFILE=$1
+BB=/system/xbin/busybox
+
+echo "-- applying LMK tweaks" | tee -a $LOGFILE
+sysset 64 /sys/module/lowmemorykiller/parameters/cost
+sysset 0 /sys/module/lowmemorykiller/parameters/debug_level
+
+echo "-- setting LMK memory parameters" | tee -a $LOGFILE
+
+memTotal=$(free -m | awk '/^Mem:/{print $2}')
+echo "-- memTotal = $memTotal (MB)" | tee -a $LOGFILE
+# Higher values of oom_adj are more likely
+# to be killed by the kernel's oom killer
+# The current foreground app has a oom_adj of 0
+adj="0,112,224,408,824,1000"
+echo "-- adj = $adj" | tee -a $LOGFILE
+fa=$(((memTotal*2/100)*1024/4))
+va=$(((memTotal*3/100)*1024/4))
+ss=$(((memTotal*5/100)*1024/4))
+ha=$(((memTotal*6/100)*1024/4))
+cp=$(((memTotal*9/100)*1024/4))
+ea=$(((memTotal*11/100)*1024/4))
+minFree="$fa,$va,$ss,$ha,$cp,$ea"
+echo "-- minFree = $minFree" | tee -a $LOGFILE
+
+# If you set this to lower than 1024KB, your system will
+# become subtly broken, and prone to deadlock under high loads, we don't allow it below 3072kb
+mfk=$((memTotal*14/5))
+if [ "$mfk" -le "3072" ]; then
+    mfk=3072
+fi
+# Extra free kbytes calculated based on min_free_kbytes
+efk=$((mfk*16/5))
+if [ "$efk" -le 18432 ]; then
+	  efk=18432‬
+fi
+backgroundAppLimit="44"
+# Set 1 to reclaim resources quickly when needed.
+fastRun="0"
+oomReaper="1"
+adaptiveLmk="0"
+
+resetprop ro.sys.fw.bg_apps_limit $backgroundAppLimit
+resetprop ro.vendor.qti.sys.fw.bg_apps_limit $backgroundAppLimit
+
+sysset $adj /sys/module/lowmemorykiller/parameters/adj
+sysset $oomReaper /sys/module/lowmemorykiller/parameters/oom_reaper
+sysset $fastRun /sys/module/lowmemorykiller/parameters/lmk_fast_run
+sysset $adaptiveLmk /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
+sysset $minFree /sys/module/lowmemorykiller/parameters/minfree
+sysset $mfk /proc/sys/vm/min_free_kbytes
+sysset $efk /proc/sys/vm/extra_free_kbytes
+
+setprop lmk.autocalc false

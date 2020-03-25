@@ -1,0 +1,4 @@
+service vendor.rpmb_hal /vendor/bin/hw/vendor.oneplus.hardware.rpmb@1.0-service
+    class late_start
+    user root
+    group system input sdcard_rw

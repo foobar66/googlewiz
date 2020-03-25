@@ -1,0 +1,31 @@
+syntax = "proto2";
+import "nanopb.proto";
+import public "sns_std_type.proto";
+enum sns_std_msgid {
+  option (nanopb_enumopt).long_names = false;
+  SNS_STD_MSGID_SNS_STD_ATTR_REQ = 1;
+  SNS_STD_MSGID_SNS_STD_FLUSH_REQ = 2;
+  SNS_STD_MSGID_SNS_STD_ATTR_EVENT = 128;
+  SNS_STD_MSGID_SNS_STD_FLUSH_EVENT = 129;
+  SNS_STD_MSGID_SNS_STD_ERROR_EVENT = 130;
+}
+message sns_std_request {
+  message batch_spec {
+    required uint32 batch_period = 1;
+    optional uint32 flush_period = 2;
+    optional bool flush_only = 3 [default = false];
+    optional bool max_batch = 4 [default = false];
+  }
+  optional batch_spec batching = 1;
+  optional bytes payload = 2;
+  optional bool is_passive = 3 [default = false];
+}
+message sns_std_attr_req {
+  optional bool register_updates = 2;
+}
+message sns_std_attr_event {
+  repeated sns_std_attr attributes = 1;
+}
+message sns_std_error_event {
+  required sns_std_error error = 1;
+}

@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<gs>
+<p att="com.android.coll"></p>
+<p att="com.skynet.push.message.send.return"></p>
+<p att="Heartbeat"></p>
+<p att="action_keep_alive_cycle"></p>
+<p att="action_keep_alive_close"></p>
+<p att="action_ping_unlock"></p>
+<p att="action_ping"></p>
+<p att="HEART_BEAT"></p>
+</gs>

@@ -1,0 +1,5 @@
+service bpfloader /system/bin/bpfloader
+    class main
+    capabilities SYS_ADMIN
+    rlimit memlock 67108864 67108864
+    oneshot

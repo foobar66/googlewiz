@@ -1,0 +1,20 @@
+#!/system/bin/sh
+
+dodump () {
+    for f in `find $1 -type f | grep -v time_in_state | grep -v trans_table`; do
+        printf "%-70s %-30s\n" $f "`cat $f 2>/dev/null`"
+    done
+    echo ""
+}
+
+for i in 0 1 2 3 4 5 6 7; do
+    for e in /sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_min_freq /sys/devices/system/cpu/cpu$i/cpufreq/cpuinfo_max_freq /sys/devices/system/cpu/cpu$i/cpufreq/scaling_available_frequencies /sys/devices/system/cpu/cpu$i/cpufreq/scaling_min_freq /sys/devices/system/cpu/cpu$i/cpufreq/scaling_max_freq /sys/devices/system/cpu/cpu$i/cpufreq/scaling_available_governors /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor /sys/devices/system/cpu/cpu$i/cpufreq/scaling_driver /sys/devices/system/cpu/cpu$i/cpufreq/schedutil/down_rate_limit_us /sys/devices/system/cpu/cpu$i/cpufreq/schedutil/pl /sys/devices/system/cpu/cpu$i/cpufreq/schedutil/up_rate_limit_us /sys/devices/system/cpu/cpu$i/cpufreq/schedutil/hispeed_load /sys/devices/system/cpu/cpu$i/cpufreq/schedutil/hispeed_freq /sys/devices/system/cpu/cpu$i/cpufreq/related_cpus /sys/devices/system/cpu/cpu$i/cpufreq/affected_cpus; do
+        printf "%-70s %-30s\n" $e "`cat $e 2>/dev/null`"
+    done
+    echo ""
+done
+
+dodump /proc/sys/vm/
+dodump /sys/module/lowmemorykiller/parameters/
+dodump /sys/block/mmcblk0/queue/
+dodump /sys/block/sda/queue/

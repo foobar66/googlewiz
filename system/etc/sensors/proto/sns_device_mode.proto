@@ -1,0 +1,28 @@
+syntax = "proto2";
+import "nanopb.proto";
+import "sns_std_sensor.proto";
+enum sns_device_mode_msgid
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DEVICE_MODE_MSGID_SNS_DEVICE_MODE_EVENT = 772;
+}
+enum sns_device_mode
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DEVICE_MODE_UNKNOWN = 0;
+  SNS_DEVICE_MODE_FLIP_OPEN  = 1;
+}
+enum sns_device_state
+{
+  option (nanopb_enumopt).long_names = false;
+  SNS_DEVICE_STATE_INACTIVE  = 0;
+  SNS_DEVICE_STATE_ACTIVE  = 1;
+}
+message sns_device_mode_event
+{
+  message mode_spec {
+    required sns_device_mode mode = 1;
+    required sns_device_state state = 2;
+  }
+  repeated mode_spec device_mode = 1;
+}
