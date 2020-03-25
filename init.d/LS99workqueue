@@ -1,8 +1,0 @@
-#!/system/bin/sh
-
-LOGFILE=$1
-
-. /etc/init.d/googlewiz.sh
-
-echo "-- applying workqueue tweak" | tee -a $LOGFILE
-sysset N /sys/module/workqueue/parameters/power_efficient

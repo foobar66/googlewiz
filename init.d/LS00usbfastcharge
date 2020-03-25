@@ -1,8 +1,0 @@
-#!/system/bin/sh
-
-LOGFILE=$1
-
-. /etc/init.d/googlewiz.sh
-
-echo "-- trying to force fast charge" | tee -a $LOGFILE
-sysset 1 /sys/kernel/fast_charge/force_fast_charge

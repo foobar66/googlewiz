@@ -1,6 +1,0 @@
-#!/system/bin/sh
-
-LOGFILE=$1
-
-echo "-- disabling doze using dumpsys deviceidle disable" | tee -a $LOGFILE
-/system/bin/dumpsys deviceidle disable
