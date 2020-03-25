@@ -1,5 +1,6 @@
 #!/bin/bash
 # put into git on 20200325
+# corrected bug found by XDA member droidvark
 
 echo "$@"
 
