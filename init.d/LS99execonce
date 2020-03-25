@@ -1,0 +1,273 @@
+#!/system/bin/sh
+
+# we should only run once !
+if [ -f "/data/.googlewiz.touch" ]; then exit 0; fi
+
+LOGFILE=$1
+
+. /etc/init.d/googlewiz.sh
+
+BB=/system/xbin/busybox
+CMD=/system/bin/cmd
+
+if [ $(getprop ro.build.version.sdk) -ne 29 ]; then
+    echo "-- we're NOT on android 10, not running this script" | tee -a $LOGFILE
+    exit 0
+fi
+
+waitforsdcard $LOGFILE
+
+echo "-- changing global settings" | tee -a $LOGFILE
+$CMD settings put global activity_starts_logging_enabled 0
+$CMD settings put global adaptive_battery_management_enabled 0
+$CMD settings put global adb_enabled 1
+$CMD settings put global add_users_when_locked 0
+$CMD settings put global airplane_mode_on 0
+$CMD settings put global airplane_mode_radios cell,bluetooth,wifi,nfc,wimax
+$CMD settings put global airplane_mode_toggleable_radios bluetooth,wifi,nfc
+$CMD settings put global animator_duration_scale 0.0
+$CMD settings put global assisted_gps_enabled 1
+$CMD settings put global auto_time 1
+$CMD settings put global auto_time_zone 1
+$CMD settings put global bluetooth_on 1
+$CMD settings put global data_roaming1 1
+$CMD settings put global data_roaming2 0
+$CMD settings put global data_roaming 0
+$CMD settings put global dock_audio_media_enabled 0
+$CMD settings put global dock_sounds_enabled 0
+$CMD settings put global dock_sounds_enabled_when_accessbility 0
+$CMD settings put global development_settings_enabled 1
+$CMD settings put global device_name 'OnePlus 7T pro'
+$CMD settings put global enable_cache_quota_calculation 0
+$CMD settings put global enable_diskstats_logging 0
+$CMD settings put global enable_gpu_debug_layers 0
+$CMD settings put global enable_gnss_raw_meas_full_tracking 0
+$CMD settings put global guest_user_enabled 0
+$CMD settings put global heads_up_notifications_enabled 0
+$CMD settings put global low_power 0
+$CMD settings put global mobile_data0 1
+$CMD settings put global mobile_data1 1
+$CMD settings put global mobile_data 1
+$CMD settings put global mobile_data_always_on 0
+$CMD settings put global mobile_data_network_enable 0
+$CMD settings put global netstats_enabled 0
+$CMD settings put global network_recommendations_enabled 0
+$CMD settings put global network_scoring_ui_enabled 0
+$CMD settings put global network_watchlist_enabled 0
+$CMD settings put global oem_black_mode 1
+$CMD settings put global oneplus_otg_auto_disable 1
+$CMD settings put global oneplus_permission_agree 1
+$CMD settings put global oneplus_screen_refresh_rate 0
+$CMD settings put global oneplus_screen_resolution_adjust 0
+$CMD settings put global op_video_enhancer 1
+$CMD settings put global ota_disable_automatic_update 1
+$CMD settings put global package_verifier_enable 1
+$CMD settings put global power_sounds_enabled 1
+$CMD settings put global persist_wifi_country_code BE
+$CMD settings put global require_password_to_decrypt 0
+$CMD settings put global sysui_demo_allowed 0
+$CMD settings put global stay_on_while_plugged_in 0
+$CMD settings put global transition_animation_scale 0.0
+$CMD settings put global upload_apk_enable 0
+$CMD settings put global usb_mass_storage_enabled 0
+$CMD settings put global wait_for_debugger 0
+$CMD settings put global wifi_auto_change_to_mobile_data 0
+$CMD settings put global wifi_display_on 0
+$CMD settings put global wifi_ipv6_supported 1
+$CMD settings put global wifi_networks_available_notification_on 0
+$CMD settings put global wifi_scan_always_enabled 0
+$CMD settings put global wifi_verbose_logging_enabled 0
+$CMD settings put global window_animation_scale 0.0
+$CMD settings put global zram_enabled 0
+
+echo "-- changing system settings" | tee -a $LOGFILE
+$CMD settings put system aod_smart_display_enabled 1
+$CMD settings put system aod_smart_display_cur_state 0
+$CMD settings put system auto_switch_mobile_data 1
+$CMD settings put system battery_led_charging 0
+$CMD settings put system buttons_show_on_screen_navkeys 0
+$CMD settings put secure clock_seconds 0
+$CMD settings put system date_format dd-mm-yyyy
+$CMD settings put system dim_screen 1
+$CMD settings put system direct_share 0
+$CMD settings put system display_battery_percentage 1
+$CMD settings put system dtmf_tone 1
+$CMD settings put system esport_mode_enabled 0
+$CMD settings put system font_scale 1.0
+$CMD settings put system game_mode_status 0
+$CMD settings put system haptic_feedback_enabled 1
+$CMD settings put system hearing_aid 0
+$CMD settings put system incoming_call_vibrate_intensity 3
+$CMD settings put system incoming_call_vibrate_mode 5
+$CMD settings put system launcher_iconpack none
+$CMD settings put system lockscreen_sounds_enabled 1
+$CMD settings put system notice_vibrate_intensity 2
+$CMD settings put system notification_light_pulse 0
+$CMD settings put system oem_acc_control_music 0
+$CMD settings put system oem_acc_control_next 0
+$CMD settings put system oem_acc_control_pause 0
+$CMD settings put system oem_acc_control_play 0
+$CMD settings put system oem_acc_control_prev 0
+$CMD settings put system oem_acc_night_mode 0
+$CMD settings put system oem_acc_open_flashlight 0
+$CMD settings put system oem_acc_startup_camera 0
+$CMD settings put system oem_agree_incall_people 0
+$CMD settings put system oem_allow_led_light 0
+$CMD settings put system oem_allow_suspend_notification 1
+$CMD settings put system oem_app_updates_enable 0
+$CMD settings put system oem_auto_play 0
+$CMD settings put system oem_black_mode 1
+$CMD settings put system oem_black_mode_accent_color '#FFbe0029'
+$CMD settings put system oem_eyecare_enable 0
+$CMD settings put system oem_finger_check_oneplus_account 0
+$CMD settings put system oem_font_mode 1
+$CMD settings put system oem_join_stability_plan_settings 0
+$CMD settings put system oem_join_user_plan_settings 0
+$CMD settings put system oem_oneplus_devicename 'OnePlus 7T pro'
+$CMD settings put system oem_quick_clipboard 1
+$CMD settings put system oem_screenshot_sound_enable 1
+$CMD settings put system oem_service_messaging_enable 0
+$CMD settings put system oem_share_wifi 0
+$CMD settings put system oem_vibrate_under_silent 0
+$CMD settings put system oem_zen_media_switch 1
+$CMD settings put system oem_zen_mode_enable 0
+$CMD settings put system oem_zen_status 0
+$CMD settings put system oneplus_accent_color '#ffbe0029'
+$CMD settings put system oneplus_card_disabled 1
+$CMD settings put system oneplus_auto_face_unlock_enable 0
+$CMD settings put system oneplus_fullscreen_gesture_type 1
+$CMD settings put system op_custom_horizon_light_animation_style 3
+$CMD settings put system op_custom_unlock_animation_style 9
+$CMD settings put system op_customization_theme_style 1
+$CMD settings put system op_default_app_camera com.oneplus.camera
+$CMD settings put system op_default_app_email com.google.android.gm
+$CMD settings put system op_default_app_gallery com.google.android.apps.photos
+$CMD settings put system op_default_app_music com.maxmpz.audioplayer
+$CMD settings put system op_default_country_code 'Belgium;+32'
+$CMD settings put system op_smartboost_enable 0
+$CMD settings put system optimal_power_save_mode_enabled 0
+$CMD settings put system reading_mode_status 0
+$CMD settings put system require_password_to_decrypt 0
+$CMD settings put system screen_auto_brightness_adj 0.0
+$CMD settings put system screen_brightness_mode 1
+$CMD settings put system screen_color_mode_advanced_settings_value 1
+$CMD settings put system screen_color_mode_settings_value 3
+$CMD settings put system screen_off_timeout 300000
+$CMD settings put system sound_effects_enabled 0
+$CMD settings put system status_bar_battery_style 2
+$CMD settings put system status_bar_keyquard_visibility 0
+$CMD settings put system status_bar_show_battery_percent 1
+$CMD settings put system system_locales nl-BE,en-BE
+$CMD settings put system systemui_navigation_bar_hided 0
+
+echo "-- changing secure settings" | tee -a $LOGFILE
+$CMD settings put secure accessibility_enabled 0
+$CMD settings put secure accessibility_shortcut_enabled 0
+$CMD settings put secure advanced_reboot 1
+$CMD settings put secure aod_clock_style 0
+$CMD settings put secure aod_display_text 'Philip Rademakers'
+$CMD settings put secure aware_enabled not_set
+$CMD settings put secure aware_lock_enabled 0
+$CMD settings put secure automatic_storage_manager_enabled 0
+$CMD settings put secure backup_enabled:com.android.calllogbackup 0
+$CMD settings put secure backup_enabled:com.android.providers.telephony 0
+$CMD settings put secure backup_enabled 0
+$CMD settings put secure backup_encryption_opt_in_displayed 0
+$CMD settings put secure bluetooth_aptx_hd 1
+$CMD settings put secure bluetooth_name 'OnePlus 7T pro'
+$CMD settings put secure brightness_auto 1
+$CMD settings put secure brightness_on_top 1
+$CMD settings put secure charging_sounds_enabled 1
+$CMD settings put secure charging_vibration_enabled 1
+$CMD settings put secure clock_seconds 0
+$CMD settings put secure development_settings_enabled 1
+$CMD settings put secure dialer_default_application com.google.android.dialer
+$CMD settings put secure double_tap_to_wake 1
+$CMD settings put secure doze_enabled 1
+$CMD settings put secure flashlight_available 1
+$CMD settings put secure flashlight_enabled 0
+$CMD settings put secure install_non_market_apps 1
+$CMD settings put secure instant_apps_enabled 0
+$CMD settings put secure location_providers_allowed gps,network
+$CMD settings put secure lock_screen_allow_private_notifications 0
+$CMD settings put secure lock_screen_owner_info_enabled 1
+$CMD settings put secure lock_screen_show_notifications 0
+$CMD settings put secure lock_screen_show_silent_notifications 0
+$CMD settings put secure lockdown_in_power_menu 1
+$CMD settings put secure lockscreen.disabled 0
+$CMD settings put secure lockscreen.options enable_facelock
+$CMD settings put secure night_display_activated 0
+$CMD settings put secure navigation_mode 2
+$CMD settings put secure notification_badging 1
+$CMD settings put secure notification_bubbles 0
+$CMD settings put secure notification_wake_enabled 0
+$CMD settings put secure qs_auto_tiles inversion
+$CMD settings put secure qs_tile_column 7
+$CMD settings put secure qs_tile_text_size 48
+$CMD settings put secure screensaver_activate_on_dock 0
+$CMD settings put secure screensaver_activate_on_sleep 0
+$CMD settings put secure screensaver_enabled 0
+$CMD settings put secure show_zen_settings_suggestion 0
+$CMD settings put secure sysui_force_enable_leak_reporting 0
+$CMD settings put secure sysui_qqs_count 7
+$CMD settings put secure sysui_qs_tiles 'wifi,bt,cell,location,nfc,flashlight,airplane,night,hotspot,custom(projekt.substratum/.services.tiles.SubstratumTile),cast,inversion,custom(com.google.android.apps.nbu.files/.quicksettings.StorageAssistantTileService),custom(com.teacapps.barcodescanner.pro/net.qrbot.quicksettings.ScanTileService),custom(ch.protonvpn.android/com.protonvpn.android.components.QuickTileService)'
+$CMD settings put secure touch_exploration_enabled 0
+$CMD settings put secure ui_night_mode 2
+$CMD settings put secure user_full_data_backup_aware 1
+$CMD settings put secure wake_gesture_enabled 1
+$CMD settings put secure wifi_idle_ms 300000
+$CMD settings put secure wifi_suspend_optimizations_enabled 1
+$CMD settings put secure wifi_watchdog_poor_network_test_enabled 0
+
+echo "-- granting permissions for com.google.android.contacts" | tee -a $LOGFILE
+$CMD package grant com.google.android.contacts android.permission.READ_CALENDAR 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.READ_CALL_LOG 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.ACCESS_FINE_LOCATION 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.READ_EXTERNAL_STORAGE 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.ACCESS_COARSE_LOCATION 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.READ_PHONE_STATE 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.SEND_SMS 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.CALL_PHONE 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.WRITE_CONTACTS 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.CAMERA 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.WRITE_CALL_LOG 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.PROCESS_OUTGOING_CALLS 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.GET_ACCOUNTS 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.WRITE_EXTERNAL_STORAGE 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.RECORD_AUDIO 2> /dev/null
+$CMD package grant com.google.android.contacts android.permission.READ_CONTACTS 2> /dev/null
+
+echo "-- granting permissions for com.google.android.dialer" | tee -a $LOGFILE
+$CMD package grant com.google.android.dialer android.permission.READ_CALENDAR 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.READ_CALL_LOG 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.ACCESS_FINE_LOCATION 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.READ_EXTERNAL_STORAGE 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.ACCESS_COARSE_LOCATION 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.READ_PHONE_STATE 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.SEND_SMS 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.CALL_PHONE 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.WRITE_CONTACTS 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.CAMERA 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.WRITE_CALL_LOG 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.PROCESS_OUTGOING_CALLS 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.GET_ACCOUNTS 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.WRITE_EXTERNAL_STORAGE 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.RECORD_AUDIO 2> /dev/null
+$CMD package grant com.google.android.dialer android.permission.READ_CONTACTS 2> /dev/null
+$CMD package grant com.google.android.dialer com.android.voicemail.permission.ADD_VOICEMAIL 2> /dev/null
+
+echo "-- granting permissions for com.google.android.apps.wellbeing" | tee -a $LOGFILE
+$CMD package grant com.google.android.apps.wellbeing android.permission.WRITE_EXTERNAL_STORAGE
+
+$CMD appops set com.google.android.dialer SYSTEM_ALERT_WINDOW allow
+
+# turn off NFC
+echo "-- turn off NFC" | tee -a $LOGFILE
+/system/bin/service call nfc 6 > /dev/null
+
+# this file seems to be missing (logcat)
+touch /data/system/smartcontrol.xml
+
+# now make sure this script so it runs exactly once
+echo "-- touch /data/.googlewiz.touch" | tee -a $LOGFILE
+$BB touch /data/.googlewiz.touch

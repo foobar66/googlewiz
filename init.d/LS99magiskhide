@@ -1,0 +1,24 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+MH=/sbin/magiskhide
+
+dohide () {
+    echo "-- magiskhide --add $1" | tee -a $LOGFILE
+    $MH --add $1
+}
+
+dohide be.bmid.itsme
+dohide be.keytradebank.phone
+#dohide com.android.dialer
+#dohide com.android.phone
+#dohide com.android.providers.telephony
+#dohide com.android.vending
+dohide com.google.android.apps.walletnfcrel
+#dohide com.google.android.gms
+#dohide com.google.android.gms.gcm.ACTION_CHECK_QUEUE
+#dohide com.google.android.gms.googlecertificates
+#dohide com.google.android.gms.org.conscrypt.Platform.setSocketWriteTimeout
+#dohide com.google.android.gsf
+dohide com.netflix.mediaclient
+dohide mobi.inthepocket.bcmc.bancontact

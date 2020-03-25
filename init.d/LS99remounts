@@ -1,0 +1,12 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+MOUNT="/system/xbin/busybox mount -o remount,noatime,nodiratime"
+
+$MOUNT /data
+echo "-- $MOUNT /data"
+$MOUNT /product
+echo "-- $MOUNT /product"
+$MOUNT /vendor
+echo "-- $MOUNT /vendor"

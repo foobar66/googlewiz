@@ -1,0 +1,12 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+sleep 10
+
+if [ -e /system/xbin/freeze ]; then
+    echo "-- freezing apps" | tee -a $LOGFILE
+    /system/xbin/freeze disable | sed 's/Package/   -- freezing:/g' | tee -a $LOGFILE
+else
+    echo "-- /system/xbin/freeze does not exist" | tee -a $LOGFILE
+fi
+

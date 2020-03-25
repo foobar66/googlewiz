@@ -1,0 +1,13 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+sleep 20
+
+ENTRY=/sys/kernel/dyn_fsync/Dyn_fsync_active
+if [ -f "$ENTRY" ]; then
+    echo "-- turning off dynamic fsync ($ENTRY)" | tee -a $LOGFILE
+    echo 0 > "$ENTRY"
+else
+    echo "-- $ENTRY does not exist" | tee -a $LOGFILE
+fi

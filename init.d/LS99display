@@ -1,0 +1,18 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+
+CMD=/system/bin/cmd
+
+. /etc/init.d/googlewiz.sh
+
+echo "-- disabling display auto-brightness and white-balance logging" | tee -a $LOGFILE
+$CMD display ab-logging-disable
+$CMD display dwb-logging-disable
+
+echo "-- setting display parameters" | tee -a $LOGFILE
+for i in /sys/kernel/debug/dsi_samsung_oneplus_dsc_cmd_display; do
+    sysset Y $i/dsi-phy-0_allow_phy_power_off
+    sysset Y $i/ulps_feature_enable
+    sysset Y $i/ulps_suspend_feature_enable
+done

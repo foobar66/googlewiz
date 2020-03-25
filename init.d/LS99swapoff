@@ -1,0 +1,15 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+TB=/system/bin/toybox
+
+sleep 15
+
+if [ -e /dev/block/zram0 ]; then
+    echo "-- turning off swap for /dev/block/zram0" | tee -a $LOGFILE
+    $TB swapoff /dev/block/zram0
+fi
+if [ -e /dev/block/vnswap0 ]; then
+    echo "-- turning off swap for /dev/block/vnswap0" | tee -a $LOGFILE
+    $TB swapoff /dev/block/vnswap0
+fi
