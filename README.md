@@ -1,5 +1,5 @@
 # googlewiz
-[SIZE="8"][B]*** [IMG]https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/272px-Google_2015_logo.svg.png[/IMG][I]Wiz[/I] *** [SIZE="5"]Pixelize your OnePlus 7T pro[/SIZE][/B][/SIZE]
+<b>*** <img>https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/272px-Google_2015_logo.svg.png</img><i>Wiz</i? *** Pixelize your OnePlus 7T pro</b>
 [I][U][SIZE="6"][B]"Extreme debloat: Go where OnePlus has never gone before"[/B][/SIZE][/U][/I]
 
 Script to generate the GoogleWiz magisk module (zipmagiskmodules) and the resulting module itself
