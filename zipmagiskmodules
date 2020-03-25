@@ -1,6 +1,7 @@
 #!/bin/bash
 # put into git on 20200325
 # corrected bug found by XDA member droidvark
+# added ssh keys for git
 
 echo "$@"
 
