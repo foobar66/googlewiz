@@ -1,5 +1,4 @@
 #!/bin/bash
-# put into git on 20200325
 
 echo "$@"
 
