@@ -271,7 +271,7 @@ copyfiles () {
     CUR=$(pwd)
     echo -e "\tcopying $3 files from $1 to $2"
     cd "$1"
-    tar cf - $(find . -type f -name "$3") | (cd "$2"; tar xf -)
+    sudo tar cf - $(find . -type f -name "$3") | (cd "$2"; tar xf -)
     cd $CUR
 }
 
@@ -972,15 +972,26 @@ fi
 # print some stats
 
 TOTALFILES=$(find . -type f | wc -l)
-echo -e "-- total files in $MODULE = $TOTALFILES"
+TOTALEMPTY=$(find . -type f -empty | wc -l)
+echo -e "-- total files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.apk' | wc -l)
-echo -e "-- total APK files in $MODULE = $TOTALFILES"
+TOTALEMPTY=$(find . -type f -name '*.apk' -empty | wc -l)
+echo -e "-- total APK files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.xml' | wc -l)
-echo -e "-- total XML files in $MODULE = $TOTALFILES"
+TOTALEMPTY=$(find . -type f -name '*.xml' -empty | wc -l)
+echo -e "-- total XML files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.json' | wc -l)
-echo -e "-- total JSON files in $MODULE = $TOTALFILES"
+TOTALEMPTY=$(find . -type f -name '*.json' -empty | wc -l)
+echo -e "-- total JSON files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.sh' | wc -l)
-echo -e "-- total SH files in $MODULE = $TOTALFILES"
+TOTALEMPTY=$(find . -type f -name '*.sh' -empty | wc -l)
+echo -e "-- total CONF files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
+TOTALFILES=$(find . -type f -name '*.conf' | wc -l)
+TOTALEMPTY=$(find . -type f -name '*.conf' -empty | wc -l)
+echo -e "-- total SH files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
+TOTALFILES=$(find . -type f -name '*.ini' | wc -l)
+TOTALEMPTY=$(find . -type f -name '*.ini' -empty | wc -l)
+echo -e "-- total INI files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 
 #======================================================================
 # finally build the magizk zip file (module) and puh to phone
@@ -998,7 +1009,7 @@ echo -e "-- building module from directory $MODULE into $MODULEZIP (version: $NE
 zip -r $MODULEZIP . > /dev/null
 sync
 echo -e "-- pushing $MODULEZIP to device"
-adb push $MODULEZIP /sdcard/
+adb push $MODULEZIP /sdcard/ > /dev/null
 
 echo "-- done"
 exit 0
