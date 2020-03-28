@@ -267,9 +267,10 @@ optimize_sql () {
 #======================================================================
 # helper function to copy files from original OnePlus software
 
+# we need to copy using sudo as not all files are accessible in the mounted OnePlus SW images
 copyfiles () {
     CUR=$(pwd)
-    echo -e "\tcopying $3 files from $1 to $2"
+    #echo -e "\tcopying $3 files from $1 to $2"
     cd "$1"
     sudo tar cf - $(find . -type f -name "$3") | (cd "$2"; tar xf -)
     cd $CUR
@@ -318,7 +319,7 @@ for i in androidauto apackages appc bash busybox cmp compall copyflash diff dope
     chmod 755 $TARGET/$i
 done
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in system/xbin"
+echo -e "\tcopied $NUMFILES files in system/xbin"
 
 # and we also remove a few by making them empty files
 for i in antradio_app pnx; do
@@ -338,7 +339,7 @@ for i in ATFWD-daemon OPDiagdataCopy OPDiagnoseservice OPNetlinkService assertti
     touch $TARGET/$i
 done
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES (empty) files in $TARGET"
 
 #======================================================================
 # /system/framework
@@ -353,7 +354,7 @@ cp ~/7t/framework/com.google.vr.platform.jar $TARGET
 cp ~/7t/framework/com.google.widevine.software.drm.jar $TARGET
 chmod 644 $TARGET/*
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET"
+echo -e "\tcopied $NUMFILES files in $TARGET"
 
 #======================================================================
 # /system/lib64
@@ -365,7 +366,7 @@ mkdir -p $TARGET
 cp ~/7t/libs/Q/libsketchology_native.so $TARGET
 chmod 644 $TARGET/*
 NUMFILES=$(find $TARGET -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET"
+echo -e "\tcopied $NUMFILES files in $TARGET"
 
 #======================================================================
 # /system/media (sound files)
@@ -378,7 +379,7 @@ cd $MODULE/system
 tar xf ~/7t/sounds/modulemedia.tar
 cd $MODULE
 NUMFILES=$(find $TARGET -type f -name '*.ogg' | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET"
+echo -e "\tcreated $NUMFILES (sound) files in $TARGET"
 
 
 #======================================================================
@@ -393,12 +394,11 @@ mkdir -p $TARGET
 SUB1=hyphen-data
 TARGET1=$TARGET/$SUB1
 mkdir -p $TARGET1
-echo -e "\tpopulating $SUB/$SUB1 with empty files"
 for i in $(\ls $MTSYSTEM/$SUB/$SUB1/ | grep -v -en-gb); do
     touch $TARGET1/$i
 done
 NUMFILES=$(find $TARGET1 -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET1"
+echo -e "\tcreated $NUMFILES (empty) files in $SUB/$SUB1"
 
 # first copy all keylayout files (only in next step some of them will be 'emptied')
 copyfiles "$SROOT/usr" "$TARGET" '*.kl'
@@ -406,14 +406,13 @@ copyfiles "$SROOT/usr" "$TARGET" '*.kl'
 SUB2=keylayout
 TARGET2=$TARGET/$SUB2
 mkdir -p $TARGET2
-echo -e "\tpopulating $SUB/$SUB2 with empty files"
 for i in $(\ls $MTSYSTEM/$SUB/$SUB2/ | grep Vendor_); do
     # remove copied file and replace by empty file
     rm -f $TARGET2/$i
     touch $TARGET2/$i
 done
 NUMFILES=$(find $TARGET2 -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $TARGET2"
+echo -e "\tcreated $NUMFILES (empty) files in $SUB/$SUB2"
 
 mkdir -p $TARGET/share
 mkdir -p $TARGET/share/zoneinfo
@@ -429,14 +428,16 @@ optimize_kl $TARGET/keylayout
 
 emptyapks () {
     TARGET=$MODULE/$1
-    echo -e "-- generating $1"
     mkdir -p $TARGET
+    CNT=0
     for i in $(echo -e "$2"); do
         # create the directory in $TARGET
         mkdir -p $TARGET/$i
         # put an "empty" apk file there X.apk where X is the same name as the directory
         touch $TARGET/$i/$i.apk
+        CNT=$(( $CNT + 1 ))
     done
+    echo -e "-- generating $1 ($CNT empty APKs)"
 }
 
 #======================================================================
@@ -536,12 +537,11 @@ cp ~/7t/init.d/LS99* $TARGET/services.d/
 chmod 755 $TARGET/init.d/*
 chmod 755 $TARGET/services.d/*
 
-# actions
+# hosts
 echo -e "\tcopying hosts files"
 cp ~/7t/hosts/* $TARGET
 chmod 644 $TARGET/hosts*
 cp $TARGET/hosts.medium $TARGET/hosts
-# end actions
 NUMFILES=$(find $TARGET -name 'hosts*' | wc -l)
 echo -e "\tcreated $NUMFILES 'hosts' files in $TARGET"
 
@@ -561,12 +561,10 @@ fi
 SUB1=init
 TARGET1=$TARGET/$SUB1
 echo -e "\tcreating $SUB/$SUB1 and empty .rc files"
-# actions
 for i in atrace.rc bluetooth-events.rc bootstat.rc caffed.rc com.qualcomm.qti.sigma_miracast\@1.0-service.rc dumpstate.rc engineermode.rc flags_health_check.rc heapprofd.rc incidentd.rc iorapd.rc mdnsd.rc perfetto.rc perfservice.rc recovery-persist.rc recovery-refresh.rc rss_hwm_reset.rc sarahd.rc statsd.rc tombstoned.rc traceur.rc uncrypt.rc update_engine.rc update_verifier.rc wfdservice.rc; do
     rm -f $TARGET1/$i
     touch $TARGET1/$i
 done
-# end actions
 NUMFILES=$(find $TARGET1 -type f | wc -l)
 echo -e "\tcreated $NUMFILES files in $TARGET1"
 
@@ -576,7 +574,6 @@ TARGET3=$TARGET/$SUB3
 echo -e "\tgenerating $SUB/$SUB3"
 mkdir -p $TARGET3
 # we should not delete any .xml files in $TARGET3 (as this has been done from system/etc)
-# actions
 # note that we do not need to copy files from permissions (as these are .xml and have been copied above)
 # just add the extra .xml files in permissions
 for i in com.google.android.media.effects privapp-permissions-com.android.hotwordenrollment.tgoogle privapp-permissions-google-dpc privapp-permissions-airaudio org.pixelexperience.ambient.play org.pixelexperience.weather.client com.android.systemui com.android.settings android.hardware.vr.high_performance android.hardware.vr.headtracking com.google.android.dialer.support nexus nova pixel_2017 pixel_2017_exclusive privapp-permissions-airaudio gearhead privapp-permissions-philip; do
@@ -597,9 +594,7 @@ TARGET2=$TARGET/$SUB2
 echo -e "\tgenerating $SUB/$SUB2"
 mkdir -p $TARGET2
 # we should not delete any .xml files in $TARGET2 (as this has been done from system/etc)
-# actions
 cp ~/7t/sysconfig/* $TARGET2
-#end actions
 NUMFILES=$(find $TARGET2 -type f | wc -l)
 echo -e "\tcreated $NUMFILES files in $TARGET2"
 
@@ -623,7 +618,6 @@ optimize_json $TARGET
 optimize_conf $TARGET
 optimize_proto $TARGET
 optimize_rc $TARGET
-
 cd $MODULE
 
 #======================================================================
@@ -717,11 +711,13 @@ done
 #=====================
 # /vendor/ueventd.rc
 # this is the only file outside 'etc' subdirectory which is an rc file
+
 echo -e "\tgenerating $TARGET/ueventd.rc from $VROOT/ueventd.rc"
 sudo cat $VROOT/ueventd.rc | grep -v ^# | sed '/^$/d' | sort > $TARGET/ueventd.rc
 
 #=====================
 # /vendor/radio (.sql files)
+
 SUB0=radio
 TARGET0=$TARGET/radio
 echo -e "\tgenerating $SUB/$SUB0"
@@ -732,6 +728,7 @@ optimize_sql "$TARGET0"
 
 #=====================
 # /vendor/etc
+
 SUB1=etc
 TARGET1=$TARGET/$SUB1
 echo -e "\tgenerating $SUB/$SUB1"
@@ -746,7 +743,7 @@ copyfiles "$VROOT/etc" "$TARGET1" '*.ini'
 
 # 3 special json files which were hand edited
 # the first 2 contain C style comments, the last file has a syntax error in the original SW
-echo -e "\tcopying json files from ~7t/json"
+echo -e "\tcopying 3 json files from ~7t/json"
 cp ~/7t/json/ta_config.json $TARGET1/ssg/
 cp ~/7t/json/tz_whitelist.json $TARGET1/ssg/
 cp ~/7t/json/sns_mag_cal_legacy.json $TARGET1/sensors/config/
@@ -773,7 +770,7 @@ echo -e "\temptying $TARGET1/init/vendor.dolby.hardware.dms@1.0-service.rc file 
 rm -f $TARGET1/init/vendor.dolby.hardware.dms\@1.0-service.rc
 touch $TARGET1/init/vendor.dolby.hardware.dms\@1.0-service.rc
 
-echo -e "\tcopying mixer paths"
+echo -e "\tcopying mixer paths mixer_paths_tavil.xml and mixer_paths_pahu.xml"
 # copy sound paths (increased volume)
 cp ~/7t/etc/mixer_paths_tavil.xml $TARGET1
 cp ~/7t/etc/mixer_paths_pahu.xml $TARGET1
@@ -795,6 +792,7 @@ cat $VROOT/etc/DxHDCP.cfg | grep -v ^# | sed '/^$/d' | sed 's/EnableLogs=True/En
 
 #=====================
 # bin
+
 SUB2=bin
 TARGET2=$TARGET/$SUB2
 echo -e "\tgenerating $SUB/$SUB2"
@@ -805,7 +803,7 @@ for i in audioflacapp ATFWD-daemon OPNetlinkService host_manager_11ad wfdvndserv
     touch $TARGET2/$i
 done
 NUMFILES=$(find $TARGET2 -type f | wc -l)
-echo -e "\tcreated $NUMFILES files in $SUB/$SUB2"
+echo -e "\tcreated $NUMFILES (empty) files in $SUB/$SUB2"
 
 # empty binaries in vendor/bin/hw
 mkdir -p $TARGET2/hw
@@ -814,17 +812,17 @@ for i in android.hardware.atrace\@1.0-service android.hardware.neuralnetworks\@1
     touch $TARGET2/hw/$i
 done
 NUMFILES=$(find $TARGET2/hw -type f | wc -l)
-echo -e "\temptied $NUMFILES files in $TARGET2/hw"
+echo -e "\temptied $NUMFILES (empty) files in $TARGET2/hw"
 
 #=====================
 # optimize
+
 cd $TARGET
 optimize_xml $TARGET
 optimize_json $TARGET
 optimize_conf $TARGET
 optimize_rc $TARGET
 optimize_ini $TARGET
-
 cd $MODULE
 
 #======================================================================
@@ -866,6 +864,7 @@ done
 
 #=====================
 # /product/etc
+
 SUB1=etc
 TARGET1=$TARGET/$SUB1
 echo -e "\tgenerating $SUB/$SUB1"
@@ -904,6 +903,7 @@ cat $PROOT/etc/permissions/vendor.qti.hardware.data.connection-V1.1-java.xml | s
 
 #=====================
 # /product/overlay
+
 SUB2=overlay
 TARGET2=$TARGET/$SUB2
 echo -e "\tgenerating $SUB/$SUB2"
@@ -917,11 +917,11 @@ chmod 644 $TARGET2/*
 
 #=====================
 # optimize
+
 cd $TARGET
 optimize_xml $TARGET
 optimize_conf $TARGET
 optimize_rc $TARGET
-
 cd $MODULE
 
 #======================================================================
@@ -931,10 +931,10 @@ find . -type f -name '#*' -exec rm -f {} \;
 
 #======================================================================
 # final validation on all XML files
+
 NUMFILES=$(find . -type f -name '*.xml' | wc -l)
 echo -e "-- validating $NUMFILES XML files"
 find $MODULE -type f -name '*.xml' -exec xmlstarlet val {} \; | grep -v '\- valid'
-
 
 #======================================================================
 # generate a file with bind-mounts to the APK directories in extra
@@ -957,7 +957,7 @@ done
 
 rm -f $MODULE/googlewiz
 if [ "$WIZ" == 1 ]; then
-    echo -e "-- we're generating the googlewiz version"
+    echo -e "-- we're generating the googlewiz version, removing files"
     touch $MODULE/googlewiz
     rm -rf system/vendor/app/MySystemInfo/
     rm -rf system/vendor/app/MyLauncherKey/
@@ -985,10 +985,10 @@ TOTALEMPTY=$(find . -type f -name '*.json' -empty | wc -l)
 echo -e "-- total JSON files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.sh' | wc -l)
 TOTALEMPTY=$(find . -type f -name '*.sh' -empty | wc -l)
-echo -e "-- total CONF files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
+echo -e "-- total SH files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.conf' | wc -l)
 TOTALEMPTY=$(find . -type f -name '*.conf' -empty | wc -l)
-echo -e "-- total SH files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
+echo -e "-- total CONF files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
 TOTALFILES=$(find . -type f -name '*.ini' | wc -l)
 TOTALEMPTY=$(find . -type f -name '*.ini' -empty | wc -l)
 echo -e "-- total INI files in $MODULE = $TOTALFILES ($TOTALEMPTY empty)"
