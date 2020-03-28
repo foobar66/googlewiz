@@ -3,17 +3,36 @@
 # corrected bug found by XDA member droidvark
 # added ssh keys for git
 
-cd ~
+#======================================================================
+# core variables
+
+VERSION="$1"
+EXPAPPS=0
+NOMODULE=0
+WIZ=0
+SWVER="$VERSION"
+CURR=$(pwd)
+NAME=googlewiz
+BASE=/home/philip/7t/magisk/modules
+MODULE="$BASE/$NAME"
+SRC=/home/philip/pro
+SWSRC="$SRC/software-$SWVER"
+MODULEZIP="/home/philip/Desktop/mm-$NAME.zip"
+APNS=apns-conf.xml
+APNS2=apns-conf2.xml
+
+#======================================================================
+# process command line args
 
 if [ $# -eq 0 ]; then
     echo -e "usage: $0 <version> [apps] [nomodule] [wiz]"
     exit -1
 fi
 
-VERSION="$1"
-EXPAPPS=0
-NOMODULE=0
-WIZ=0
+# arguments:
+# apps: include apps inside the magisk module (instead of using /sdcard/modappsq.tar
+# nomodule: build the module but do not create a magisk zip file
+# wiz: build the googlewiz variant of the module (removes apps which I paid for like Nova Prime)
 
 for arg in "$@"; do
     if [ "$arg" == "apps" ]; then EXPAPPS=1; fi
@@ -24,21 +43,20 @@ done
 
 echo -e "-- apps = $EXPAPPS, nomodule = $NOMODULE, wiz = $WIZ"
 
+#======================================================================
+# mount original OnePlus software images
+
 # mount original software system, product, vendor partitions
-echo -e "-- mounting system, product, vendir partitions from $VERSION"
-~/bin/mt "$VERSION" 2>/dev/null
-
-SWVER=$1
-CURR=$(pwd)
-NAME=googlewiz
-BASE=~/7t/magisk/modules
-MODULE=$BASE/$NAME
-SRC=~/pro
-SWSRC=$SRC/software-$SWVER
-MODULEZIP=~/Desktop/mm-$NAME.zip
-APNS=apns-conf.xml
-APNS2=apns-conf2.xml
-
+# expects original software images in ~/pro/software-$VERSION/output/*.img
+# there should be a directory ~/pro/software-XYZ/output/mnt with 3 subdirectories
+# ~/pro/software-XYZ/output/mnt/system
+# ~/pro/software-XYZ/output/mnt/vendor
+# ~/pro/software-XYZ/output/mnt/product
+# partitions must be mounted read-only
+echo -e "-- mounting system, product, vendor partitions from $VERSION"
+sudo mount -o loop -o ro ~/pro/software-$1/output/system.img ~/pro/software-$1/output/mnt/system 2>/dev/null
+sudo mount -o loop -o ro ~/pro/software-$1/output/vendor.img ~/pro/software-$1/output/mnt/vendor 2>/dev/null
+sudo mount -o loop -o ro ~/pro/software-$1/output/product.img ~/pro/software-$1/output/mnt/product 2>/dev/null
 
 #======================================================================
 # prerequisites
@@ -60,7 +78,6 @@ for i in $MODULE/install.sh $MODULE/module.prop $MODULE/post-fs-data.sh $MODULE/
         exit 1
     fi
 done
-
 
 echo -e "\tchecking if ~/pro/modappsq.tar exists"
 if [ ! -f ~/pro/modappsq.tar ]; then
@@ -116,7 +133,7 @@ rm -f $MODULE/.expandapps
 if [ $EXPAPPS -eq 1 ]; then
     echo -e "\tAPKs will be expanded during module creation"
 else
-    echo -e "\tAPKs will not be expanded during module creation"
+    echo -e "\tAPKs will NOT be expanded during module creation (expanded from /sdcard/modappsq.tar)"
     touch $MODULE/.expandapps
 fi 
 
@@ -130,14 +147,14 @@ PROOT=$MTPRODUC
 
 echo "-- cleaning up old files"
 echo -e "\tremoving $MODULEZIP"
-rm -f ~/Desktop/mm-*.zip
+rm -f $MODULEZIP
 echo -e "\tcleaning up junk files in $MODULE"
 cd $MODULE
 find $MODULE -name '*~' -exec rm -f {} \;
 find $MODULE -name '#*' -exec rm -f {} \;
 
 #======================================================================
-# helper functions to optimize files
+# helper functions to optimize files (xml, json, proto, conf, rc, sh, idc, ini)
 
 optimize_xml () {
     cd $1
@@ -248,7 +265,7 @@ optimize_sql () {
 }
 
 #======================================================================
-# helper function to copy files
+# helper function to copy files from original OnePlus software
 
 copyfiles () {
     CUR=$(pwd)
@@ -952,6 +969,21 @@ if [ "$WIZ" == 1 ]; then
 fi
 
 #======================================================================
+# print some stats
+
+TOTALFILES=$(find . -type f | wc -l)
+echo -e "-- total files in $MODULE = $TOTALFILES"
+TOTALFILES=$(find . -type f -name '*.apk' | wc -l)
+echo -e "-- total APK files in $MODULE = $TOTALFILES"
+TOTALFILES=$(find . -type f -name '*.xml' | wc -l)
+echo -e "-- total XML files in $MODULE = $TOTALFILES"
+TOTALFILES=$(find . -type f -name '*.json' | wc -l)
+echo -e "-- total JSON files in $MODULE = $TOTALFILES"
+TOTALFILES=$(find . -type f -name '*.sh' | wc -l)
+echo -e "-- total SH files in $MODULE = $TOTALFILES"
+
+#======================================================================
+# finally build the magizk zip file (module) and puh to phone
 
 if [ "$NOMODULE" -eq 1 ]; then
     echo -e "-- not building module ('nomodule' option was given on command line)"
@@ -959,8 +991,11 @@ if [ "$NOMODULE" -eq 1 ]; then
     exit 0
 fi
 
-echo -e "-- building module from directory $MODULE (version: $NEWVER)"
-zip -r $MODULEZIP "." > /dev/null
+cd ~
+# make sure to do an explicit cd into the module directory
+cd ~/7t/magisk/modules/googlewiz
+echo -e "-- building module from directory $MODULE into $MODULEZIP (version: $NEWVER)"
+zip -r $MODULEZIP . > /dev/null
 sync
 echo -e "-- pushing $MODULEZIP to device"
 adb push $MODULEZIP /sdcard/
