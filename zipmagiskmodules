@@ -362,7 +362,7 @@ $ECHO -e "\tcopied $NUMFILES files in system/xbin"
 
 # and we also remove a few by making them empty files
 for i in antradio_app pnx; do
-    $RM -rf $TAGET/$i
+    $RM -rf $TARGET/$i
     $TOUCH $TARGET/$i
     $CHMOD 755 $TARGET/$i
 done
@@ -376,6 +376,7 @@ $ECHO -e "-- generating $SUB (creating empty executables)"
 $MKDIR -p $TARGET
 for i in ATFWD-daemon OPDiagdataCopy OPDiagnoseservice OPNetlinkService asserttip atrace auditctl auto_brightness_log.sh bootstat br_app_data_service bugreport bugreportz caffe clatd debuggerd diag_socket_log engineer_shell.sh filebuilderd fsck_msdos heapprofd incident incident_helper incidentd iorapd migrate_legacy_obb_data.sh mmi_diag move_time_data.sh move_widevine_data.sh move_wifi_data.sh notify_traceur.sh newfs_msdos ntfs-3g ntfsfix oemlogkit opposensortest perfetto perfservice qvrservicetest qvrservicetest64 recovery-persist recovery-refresh rtspclient rtspserver schedtest sgdisk sigma_miracasthalservice simpleperf simpleperf_app_runner sload_f2fs statsd tombstoned traced traced_probes uiautomator update_engine update_engine_client vendor_cmd_tool viewcompiler vl53l1_iotest vr wfdservice wfdvndservice; do
     $TOUCH $TARGET/$i
+    $CHMOD 755 $TARGET/$i
 done
 NUMFILES=$($FIND $TARGET -type f | $WC -l)
 $ECHO -e "\tcreated $NUMFILES (empty) files in $TARGET"

@@ -15,13 +15,6 @@ LATESTARTSERVICE=true
 REPLACE="
 "
 
-##########################################################################################
-#
-# The installation framework will export some variables and functions.
-# You should use these variables and functions for installation.
-#
-# Available variables:
-#
 # MAGISK_VER (string): the version string of current installed Magisk
 # MAGISK_VER_CODE (int): the version code of current installed Magisk
 # BOOTMODE (bool): true if the module is currently installing in Magisk Manager
@@ -55,8 +48,6 @@ REPLACE="
 #       set_perm file owner group filepermission context
 #     for all directories in <directory> (including itself), it will call:
 #       set_perm dir owner group dirpermission context
-#
-##########################################################################################
 
 print_modname() {
     MODNAME=$(grep "name=" $TMPDIR/module.prop | sed 's|.*=||' | sed 's|-.*||')
@@ -78,12 +69,11 @@ on_install() {
         ui_print "- moving vendor/app to system/vendor"
         mv $MODPATH/vendor/app $MODPATH/system/vendor
     fi
-    # extract the bind-mounts files at the top of the module
+    # extract files at the top of the module
     ui_print "- Extracting file bind-mounts-product-etc"
     unzip -o "$ZIPFILE" 'bind-mounts-product-etc' -d $MODPATH >&2
     ui_print "- Extracting file bind-mounts-extra"
     unzip -o "$ZIPFILE" 'bind-mounts-extra' -d $MODPATH >&2
-    # extract file which indicates if we have to expand apps
     ui_print "- Extracting file .expandapps"
     unzip -o "$ZIPFILE" '.expandapps' -d $MODPATH >&2
     ui_print "- Extracting file post-fs-data.sh"
@@ -96,9 +86,15 @@ on_install() {
     unzip -o "$ZIPFILE" 'system.prop' -d $MODPATH >&2
     ui_print "- Extracting file googlewiz"
     unzip -o "$ZIPFILE" 'googlewiz' -d $MODPATH >&2
+    ui_print "- creating symlinks in /system/bin"
+    # there are a few files in /system/bin where we make a link (overwrite) to /system/xbin
+    # we make the symlinks here (making them in the module itself did not work, magisk?)
+    for i in cmp fdisk find unzip; do
+        ln -s /system/xbin/$i $MODPATH/system/bin/$i
+    done
     # expand apps from /sdcard/modappsq.tar (if apps were not part of the module zip file itself)
     if [ -f $MODPATH/.expandapps ]; then
-        ui_print "- Apps are not part of the module, installing them now"
+        ui_print "- APKs are not part of the module, using /sdcard/modappsq.tar"
         if [ -f /sdcard/modappsq.tar ]; then
             # note that below is the *real* path of the module for updates
             tar xf /sdcard/modappsq.tar -C /data/adb/modules_update/$MODID
@@ -113,7 +109,7 @@ on_install() {
                 ui_print "- $MODPATH/vendor/app not found"
             fi
         else
-            ui_print "- Error: could not find /data/modappsq.tar (this is bad !!!)"
+            ui_print "- Error: could not find /sdcard/modappsq.tar (this is bad !!!)"
         fi
     else
         ui_print "- Apps are already part of module (no need to expand)"
@@ -134,7 +130,7 @@ set_permissions() {
     set_perm_recursive $MODPATH/system/etc/init.d/ 0 0 0755 0755
     set_perm_recursive $MODPATH/system/etc/services.d/ 0 0 0755 0755
     # xbin (must be executable)
-    for i in androidauto apackages appc bash busybox cmp compall copyflash diff doperm dovl dss e2fsck e2fsck.static fdisk find freeze freeze fstrim ftsc gdisk gset hl hm hs idiff ipk ksettings lcpu lz4 mkappsq oena parted pps rb rmovl rsync sqlite3 strace sysro sysrw tune2fs unzip vacuum wellbeing xmlstarlet zip zipalign; do
+    for i in androidauto apackages appc bash busybox cmp compall copyflash diff doperm dovl dss fdisk find freeze ftsc gdisk gset hl hm hs idiff ipk ksettings lcpu lz4 mkappsq oena parted pps rb rmovl rsync sqlite3 strace sysro sysrw unzip vacuum wellbeing xmlstarlet zip zipalign; do
         set_perm $MODPATH/system/xbin/$i 0 0 0755
     done
     # bash
