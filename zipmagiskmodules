@@ -266,8 +266,8 @@ optimize_idc () {
 optimize_ini () {
     # optimize all .ini files
     for i in $($FIND $1 -type f -name '*.ini'); do
-        $CAT $i | $GREP -v ^# | $SED 's/#.*//g' | $SED '/^[[:space:]]*$/d' | $SED 's/ = /=/g' > /tmp/opti.idc
-        $CP /tmp/opti.idc $i
+        $CAT $i | $GREP -v ^# | $SED 's/#.*//g' | $SED '/^[[:space:]]*$/d' | $SED 's/ = /=/g' > /tmp/opti.ini
+        $CP /tmp/opti.ini $i
     done
     NUMFILES=$($FIND $1 -type f -name '*.ini' | $WC -l)
     $ECHO -e "\toptimized $NUMFILES .ini files in $1"
