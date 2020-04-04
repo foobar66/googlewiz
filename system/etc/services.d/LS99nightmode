@@ -1,10 +1,9 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
-CMD=/system/bin/cmd
+. /etc/init.d/googlewiz.sh
 
 sleep 10
 
-echo "-- forcing night mode via cmd uimode night yes" | tee -a $LOGFILE
+echo "-- forcing night mode via cmd uimode night yes" | $TEE $LOGFILE
 $CMD uimode night yes

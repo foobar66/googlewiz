@@ -1,14 +1,11 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
 
-CMD=/system/bin/cmd
-
-echo "-- setting lockapps list" | tee -a $LOGFILE
+echo "-- setting lockapps list" | $TEE $LOGFILE
 $CMD settings put system com_oneplus_systemui_recent_task_lockd_list "{com.google.android.contacts/com.android.contacts.activities.PeopleActivity#0}{com.google.android.dialer/com.google.android.dialer.extensions.GoogleDialtactsActivity#0}{com.google.android.apps.messaging/com.google.android.apps.messaging.ui.ConversationListActivity#0}"
 
 

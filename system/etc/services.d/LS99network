@@ -1,16 +1,11 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
-PROP=/system/bin/getprop
-BB=/system/xbin/busybox
-HDPARM=/system/xbin/hdparm
-IFCONFIG="toybox ifconfig"
 VALUE=1000
 
-for i in $(find /sys/class/net -type l); do
+for i in $($FIND /sys/class/net -type l); do
     sysset "$VALUE" $i/tx_queue_len
 done
 

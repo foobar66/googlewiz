@@ -1,19 +1,15 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
 
-TB=/system/bin/toybox
-BB=/system/xbin/busybox
-
-echo "-- sleeping for an additional 25 seconds to make sure all processes have started" | tee -a $LOGFILE
+echo "-- sleeping for an additional 25 seconds to make sure all processes have started" | $TEE $LOGFILE
 sleep 25
 
 #if [ `getprop ro.build.version.sdk` -eq 29 ]; then
-#    echo "-- we're on android 10, not running this script" | tee -a $LOGFILE
+#    echo "-- we're on android 10, not running this script" | $TEE $LOGFILE
 #    exit 0
 #fi
 
@@ -26,10 +22,10 @@ changepriority () {
     else
         CHANGE=decreasing
     fi
-    CURPRIO=$(toybox ps -A -o user,pid,ppid,nice,args | grep $PROCESS | grep -v grep | awk '{print $4}')
+    CURPRIO=$($TB ps -A -o user,pid,ppid,nice,args | grep $PROCESS | grep -v grep | awk '{print $4}')
     $TB renice -n "$PRIORITY" "$PID"
-    NEWPRIO=$(toybox ps -A -o user,pid,ppid,nice,args | grep $PROCESS | grep -v grep | awk '{print $4}')
-    echo "-- $CHANGE priority ($CURPRIO) of process $PROCESS ($PID) with $PRIORITY (new: $NEWPRIO)" | tee -a $LOGFILE
+    NEWPRIO=$($TB ps -A -o user,pid,ppid,nice,args | grep $PROCESS | grep -v grep | awk '{print $4}')
+    echo "-- $CHANGE priority ($CURPRIO) of process $PROCESS ($PID) with $PRIORITY (new: $NEWPRIO)" | $TEE $LOGFILE
 }
 
 changepriority logd 10

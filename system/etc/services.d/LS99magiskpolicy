@@ -1,23 +1,19 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
 
 sleep 30
-TB=/system/bin/toolbox
-GETPROP="$TB getprop"
 
 # for some reason magiskpolicy does not work on OnePlus 7T pro (hotdog)
 if [ `$GETPROP vendor.product.device` = "hotdog" ]; then
-    echo "-- magisk policy changes => exiting since we're running on hotdog" | tee -a $LOGFILE
+    echo "-- magisk policy changes => exiting since we're running on hotdog" | $TEE $LOGFILE
     exit 0
 fi
 
-echo "-- magisk policy changes" | tee -a $LOGFILE
-
+echo "-- magisk policy changes" | $TEE $LOGFILE
 magiskpolicy --live "allow * dalvikcache_data_file * *"
 magiskpolicy --live "allow audioserver labeledfs filesystem associate"
 magiskpolicy --live "allow dex2oat installd * *"

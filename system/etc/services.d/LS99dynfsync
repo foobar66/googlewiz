@@ -1,13 +1,14 @@
 #!/system/bin/sh
 
 LOGFILE=$1
+. /etc/init.d/googlewiz.sh
 
 sleep 20
 
 ENTRY=/sys/kernel/dyn_fsync/Dyn_fsync_active
 if [ -f "$ENTRY" ]; then
-    echo "-- turning off dynamic fsync ($ENTRY)" | tee -a $LOGFILE
+    echo "-- turning off dynamic fsync ($ENTRY)" | $TEE $LOGFILE
     echo 0 > "$ENTRY"
 else
-    echo "-- $ENTRY does not exist" | tee -a $LOGFILE
+    echo "-- $ENTRY does not exist" | $TEE $LOGFILE
 fi

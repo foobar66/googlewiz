@@ -1,12 +1,14 @@
 #!/system/bin/sh
 
-MODULE=/sbin/.core/modules/googlewiz
+MODULE=/sbin/.magisk/modules/googlewiz
 
-rm -rf /sdcard/modappsq.tar
+TARF=/sdcard/modappsq.tar
+rm -rf $TARF
 cd $MODULE
-echo "Creating /sdcard/modappsq.tar"
-tar cfp /sdcard/modappsq.tar \
-    system/app/My* \
+echo "Creating $TARF"
+tar cfp $TARF \
     vendor/app/My*
+NUM=$(tar tvf $TARF  | grep '\.apk' | grep base | wc -l)
+echo "$NUM APKs included in $TARF"
 sync
 sync

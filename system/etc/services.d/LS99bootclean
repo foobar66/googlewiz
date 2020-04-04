@@ -1,29 +1,27 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-RM=/system/bin/rm
-FIND=/system/xbin/find
-XARGS=toybox xargs
+. /etc/init.d/googlewiz.sh
 
-echo "-- deleting cache files in /data/data" | tee -a $LOGFILE
+echo "-- deleting cache files in /data/data" | $TEE $LOGFILE
 for dir in $($FIND /data/data -type d -iname '*cache*'); do
     $FIND "$dir" -type f -delete
 done
 
-echo "-- deleting *.tmp files in /data and /cache" | tee -a $LOGFILE
+echo "-- deleting *.tmp files in /data and /cache" | $TEE $LOGFILE
 $FIND /data -type f -not -path "/data/media/*" -prune -name '*.tmp' -delete
 $FIND /cache -type f -name '*.tmp' -delete
 
-echo "-- deleting all files in /data/system/dropbox" | tee -a $LOGFILE
+echo "-- deleting all files in /data/system/dropbox" | $TEE $LOGFILE
 $RM -rf /data/system/dropbox/*
 
-echo "-- deleting all files in /data/system/usagestats" | tee -a $LOGFILE
+echo "-- deleting all files in /data/system/usagestats" | $TEE $LOGFILE
 $RM -rf /data/system/usagestats/*
 
-echo "-- deleting *.log files in /data" | tee -a $LOGFILE
+echo "-- deleting *.log files in /data" | $TEE $LOGFILE
 $FIND /data -type f -not -path "/data/media/*" -prune -name '*.log' -delete
 
-echo "-- deleting misc files from /data" | tee -a $LOGFILE
+echo "-- deleting misc files from /data" | $TEE $LOGFILE
 $RM -rf /cache/*.apk 
 $RM -rf /cache/*.tmp 
 $RM -rf /cache/*.log 
@@ -64,5 +62,5 @@ $RM -rf /data/system/dropbox/*.txt
 $RM -rf /data/system/usagestats/*.log 
 $RM -rf /data/system/usagestats/*.txt 
 
-echo "-- deleting empty directories from /data" | tee -a $LOGFILE
+echo "-- deleting empty directories from /data" | $TEE $LOGFILE
 $FIND /data -type d -empty | xargs rm -rf

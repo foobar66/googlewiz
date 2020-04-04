@@ -1,10 +1,9 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
-echo "-- changing inode readahead blocks" | tee -a $LOGFILE
+echo "-- changing inode readahead blocks" | $TEE $LOGFILE
 for h in /sys/fs/ext4/*; do
     if [ -e "${h}"/inode_readahead_blks ]; then
         sysset "64" "${h}"/inode_readahead_blks

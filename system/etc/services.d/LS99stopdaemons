@@ -1,19 +1,16 @@
 #!/system/xbin/bash
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
 
-TB=/system/bin/toybox
-
 dostop () {
-    echo "-- stopping daemon: $1 ($2)" | tee -a $LOGFILE
+    echo "-- stopping daemon: $1 ($2)" | $TEE $LOGFILE
     $TB stop "$1"
 }
 
-echo "-- sleeping for an additional 25 seconds" | tee -a $LOGFILE
+echo "-- sleeping for an additional 25 seconds" | $TEE $LOGFILE
 sleep 25
 
 CNT=0
@@ -88,8 +85,8 @@ for sv in "${!dmap[@]}"; do
         dostop $sv "${dmap[$sv]}"
         CNT=$(( $CNT + 1 ))
     else
-        echo "-- file ${dmap[$sv]} does not exist, no action" | tee -a $LOGFILE
+        echo "-- file ${dmap[$sv]} does not exist, no action" | $TEE $LOGFILE
     fi
 done
 
-echo "-- stopped $CNT daemons in total" | tee -a $LOGFILE
+echo "-- stopped $CNT daemons in total" | $TEE $LOGFILE

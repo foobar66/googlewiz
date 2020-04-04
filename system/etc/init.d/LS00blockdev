@@ -1,12 +1,11 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 BLOCKTWEAKS=true
 if [ "$BLOCKTWEAKS" = true ]; then 
-    echo "-- block device tweaks" | tee -a $LOGFILE
+    echo "-- block device tweaks" | $TEE $LOGFILE
     for S in $(ls -d /sys/block/sd* 2>/dev/null); do
         sysset 0 $S/queue/rotational
         sysset 0 $S/queue/iostats
@@ -25,7 +24,7 @@ if [ "$BLOCKTWEAKS" = true ]; then
         sysset 100 $S/bdi/max_ratio
     done
 else
-    echo "-- not applying block device tweaks (BLOCKTWEAKS=false)" | tee -a $LOGFILE
+    echo "-- not applying block device tweaks (BLOCKTWEAKS=false)" | $TEE $LOGFILE
 fi
     
 #========================================================
@@ -33,8 +32,8 @@ fi
 
 CFQTWEAKS=true
 if [ "$CFQTWEAKS" = true ]; then 
-    echo "-- applying CFQ tweaks" | tee -a $LOGFILE
-    for S in `ls -d /sys/block/sd* 2>/dev/null`; do
+    echo "-- applying CFQ tweaks" | $TEE $LOGFILE
+    for S in $(ls -d /sys/block/sd* 2>/dev/null); do
         sysset 4 $S/queue/iosched/quantum
         sysset 80 $S/queue/iosched/fifo_expire_sync
         sysset 330 $S/queue/iosched/fifo_expire_async
@@ -51,17 +50,17 @@ if [ "$CFQTWEAKS" = true ]; then
         sysset 0 $S/queue/iosched/low_latency
     done
 else
-    echo "-- not applying CFQ tweaks (CFQTWEAKS=false)" | tee -a $LOGFILE
+    echo "-- not applying CFQ tweaks (CFQTWEAKS=false)" | $TEE $LOGFILE
 fi
 
 #========================================================
 
 SCSITWEAKS=true
 if [ "$SCSITWEAKS" = true ]; then 
-    echo "-- applying scsi disk tweaks" | tee -a $LOGFILE
+    echo "-- applying scsi disk tweaks" | $TEE $LOGFILE
     for i in $(ls /sys/class/scsi_disk); do
         sysset 'temporary none' /sys/class/scsi_disk/$i/cache_type
     done
 else
-    echo "-- not applying scsi disk tweaks (SCSITWEAKS=false)" | tee -a $LOGFILE
+    echo "-- not applying scsi disk tweaks (SCSITWEAKS=false)" | $TEE $LOGFILE
 fi

@@ -1,8 +1,9 @@
 #!/system/bin/sh
 
 LOGFILE=$1
+. /etc/init.d/googlewiz.sh
 
-MOUNT="/system/xbin/busybox mount -o remount,noatime,nodiratime"
+MOUNT="$BB mount -o remount,noatime,nodiratime"
 
 $MOUNT /data
 echo "-- $MOUNT /data"

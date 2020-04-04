@@ -1,13 +1,13 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-BB=/system/xbin/busybox
-TB=/system/bin/toybox
+. /etc/init.d/googlewiz.sh
+
 MOUNT="$TB mount"
 
 sleep 10
 
-echo "-- installing busybox in /system/bin" | tee -a $LOGFILE
+echo "-- installing busybox in /system/bin" | $TEE $LOGFILE
 $MOUNT -o rw,remount /
 $BB --install -s /system/bin/
 $MOUNT -o ro,remount /

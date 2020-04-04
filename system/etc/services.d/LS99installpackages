@@ -1,7 +1,6 @@
 #!/system/xbin/bash
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
@@ -12,15 +11,15 @@ dirmap[com.google.android.apps.recorder]=GoogleRecorder.apk
 dirmap[be.edenred.mobileapps]=TicketResto.apk
 dirmap[be.keytradebank.phone]=Keytrade.apk
 
-echo "-- installing additional packages from /sdcard/APKs directory" | tee -a $LOGFILE
+echo "-- installing additional packages from /sdcard/APKs directory" | $TEE $LOGFILE
 
 SOURCE=/sdcard/APKs
 mkdir -p /data/local/tmp
-/system/bin/cmd package list packages | grep -v Swift | sort | sed 's/package://g' > /data/local/tmp/pkglist
+$CMD package list packages | grep -v Swift | sort | sed 's/package://g' > /data/local/tmp/pkglist
 
 if [ -d $SOURCE ]; then
     for i in "${!dirmap[@]}"; do
-        echo "-- trying to install package $i" | tee -a $LOGFILE
+        echo "-- trying to install package $i" | $TEE $LOGFILE
         FILE="${dirmap[$i]}"
         if [ -f $SOURCE/$FILE ]; then
             # check if the package is already installed or not
@@ -28,26 +27,26 @@ if [ -d $SOURCE ]; then
                 cp "$SOURCE/$FILE" /data/local/tmp/$FILE
                 pm install /data/local/tmp/$FILE
                 if [ $? ]; then
-                    echo "-- installation of $i was successful" | tee -a $LOGFILE
+                    echo "-- installation of $i was successful" | $TEE $LOGFILE
                 else
-                    echo "-- installation of $i was NOT successful (pm install failer)" | tee -a $LOGFILE
+                    echo "-- installation of $i was NOT successful (pm install failer)" | $TEE $LOGFILE
                 fi
             else
-                echo "-- package $i is already installed (nothing to do)" | tee -a $LOGFILE
+                echo "-- package $i is already installed (nothing to do)" | $TEE $LOGFILE
             fi
         else
-            echo "-- APK file $i not found in $SOURCE" | tee -a $LOGFILE
+            echo "-- APK file $i not found in $SOURCE" | $TEE $LOGFILE
         fi
     done
 else
-    echo "-- nothing to do, $SOURCE does not exist" | tee -a $LOGFILE
+    echo "-- nothing to do, $SOURCE does not exist" | $TEE $LOGFILE
 fi
 
 # here we install APKs which are part of the googlewiz module
 MODULE=/data/adb/modules/googlewiz
 FROMFILE=bind-mounts-extra
 if [ -f "$MODULE/$FROMFILE" ]; then
-    echo "-- installing packages from $MODULE/$FROMFILE" | tee -a $LOGFILE
+    echo "-- installing packages from $MODULE/$FROMFILE" | $TEE $LOGFILE
     INSTALLED=0
     FAILED=0
     VERBOSE=1
@@ -59,20 +58,20 @@ if [ -f "$MODULE/$FROMFILE" ]; then
         DIR=$(echo "$i" | sed 's/:/ /g' | awk '{print $2}')
         \ls /data/app | grep "$PKGNAME-" >/dev/null
         if [ $? -eq 0 ]; then
-            [ $VERBOSE = 1 ] && (echo "   package $PKGNAME is already installed in /data/app (nothing to do)" | tee -a $LOGFILE)
+            [ $VERBOSE = 1 ] && (echo "   package $PKGNAME is already installed in /data/app (nothing to do)" | $TEE $LOGFILE)
         else
             APKFILE=$(find $MODULE/extra/$DIR -name '*.apk' | head -n 1)
-            [ $VERBOSE = 1 ] && (echo "   installing $APKFILE to /data/app" | tee -a $LOGFILE)
+            [ $VERBOSE = 1 ] && (echo "   installing $APKFILE to /data/app" | $TEE $LOGFILE)
             /system/xbin/ipk $APKFILE
             if [ $? -ne 0 ]; then
-                echo "** error during installation of $APKFILE, code = $?" | tee -a $LOGFILE
+                echo "** error during installation of $APKFILE, code = $?" | $TEE $LOGFILE
                 FAILED=$(( $FAILED + 1 ))
             else
                 INSTALLED=$(( $INSTALLED + 1 ))
             fi
         fi
     done
-    echo "-- check: installed $INSTALLED APKs (and $FAILED failed) from $MODULE/extra (out of $NUMFILES)" | tee -a $LOGFILE
+    echo "-- check: installed $INSTALLED APKs (and $FAILED failed) from $MODULE/extra (out of $NUMFILES)" | $TEE $LOGFILE
 else
-    "-- Weird: $MODULE/$FROMFILE does not exist, has it been created during module zipping?" | tee -a $LOGFILE
+    "-- Weird: $MODULE/$FROMFILE does not exist, has it been created during module zipping?" | $TEE $LOGFILE
 fi

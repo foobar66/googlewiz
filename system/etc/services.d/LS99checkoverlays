@@ -1,0 +1,8 @@
+#!/system/bin/sh
+
+LOGFILE=$1
+. /etc/init.d/googlewiz.sh
+
+sleep 30
+echo "-- launching service to check overlays" | $TEE $LOGFILE
+/system/xbin/checkoverlays &

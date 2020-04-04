@@ -3,21 +3,20 @@
 # does not work on Android Q
 
 LOGFILE=$1
-
-SP=/system/bin/setprop
+. /etc/init.d/googlewiz.sh
 
 # for some reason script /vendor/etc/vendor.memplus.sh keeps hanging
 # in an endless sleep loop
 # terminate it by setting vendor.sys.memplus.postboot to 2
 
-if /system/bin/grep '/vendor/etc/vendor.memplus.sh' `/system/bin/toybox ps -A -o user,pid,ppid,nice,args`; then
-    echo "-- process 'sh /vendor/etc/vendor.memplus.sh' is running" | tee -a $LOGFILE
+if /system/bin/grep '/vendor/etc/vendor.memplus.sh' `$TB ps -A -o user,pid,ppid,nice,args`; then
+    echo "-- process 'sh /vendor/etc/vendor.memplus.sh' is running" | $TEE $LOGFILE
 else
-    echo "-- process 'sh /vendor/etc/vendor.memplus.sh' is NOT running" | tee -a $LOGFILE
+    echo "-- process 'sh /vendor/etc/vendor.memplus.sh' is NOT running" | $TEE $LOGFILE
 fi
 
 SLEEP=10
-echo "-- sleeping $SLEEP seconds before setting vendor.sys.memplus.postboot to 2" | tee -a $LOGFILE
+echo "-- sleeping $SLEEP seconds before setting vendor.sys.memplus.postboot to 2" | $TEE $LOGFILE
 
 sleep $SLEEP
-$SP vendor.sys.memplus.postboot 2
+$SETPROP vendor.sys.memplus.postboot 2

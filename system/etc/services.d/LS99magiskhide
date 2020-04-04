@@ -1,11 +1,11 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-MH=/sbin/magiskhide
+. /etc/init.d/googlewiz.sh
 
 dohide () {
-    echo "-- magiskhide --add $1" | tee -a $LOGFILE
-    $MH --add $1
+    echo "-- magiskhide --add $1" | $TEE $LOGFILE
+    $MAGISKHIDE --add $1
 }
 
 dohide be.bmid.itsme

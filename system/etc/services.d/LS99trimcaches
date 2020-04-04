@@ -1,9 +1,10 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-PM=/system/bin/pm
 
-echo "-- pm trim-caches 16g" | tee -a $LOGFILE
+. /etc/init.d/googlewiz.sh
+
+echo "-- pm trim-caches 16g" | $TEE $LOGFILE
 $PM trim-caches 16g
-echo "-- pm trim-caches 128g" | tee -a $LOGFILE
+echo "-- pm trim-caches 128g" | $TEE $LOGFILE
 $PM trim-caches 128g

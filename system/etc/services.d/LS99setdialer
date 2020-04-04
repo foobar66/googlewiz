@@ -1,18 +1,14 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
-if [ $(getprop ro.build.version.sdk) -ne 29 ]; then
-    echo "-- we're NOT on android 10, not running this script" | tee -a $LOGFILE
+if [ $($GETPROP ro.build.version.sdk) -ne 29 ]; then
+    echo "-- we're NOT on android 10, not running this script" | $TEE $LOGFILE
     exit 0
 fi
 
 waitforsdcard $LOGFILE
 
-BB=/system/xbin/busybox
-CMD=/system/bin/cmd
-
-echo "-- changing secure setting dialer_default_application" | tee -a $LOGFILE
+echo "-- changing secure setting dialer_default_application" | $TEE $LOGFILE
 $CMD settings put secure dialer_default_application com.google.android.dialer

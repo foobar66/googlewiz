@@ -1,18 +1,13 @@
 #!/system/bin/sh
 
-# does not work on Android Q
-
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
-
-SP=/system/bin/setprop
 
 waitforsdcard $LOGFILE
 
 dosetprop() {
-    echo "-- property: $1 = $2" | tee -a $LOGFILE
-    $SP "$1" "$2"
+    echo "-- property: $1 = $2" | $TEE $LOGFILE
+    $SETPROP "$1" "$2"
 }
 
 # The global logging level

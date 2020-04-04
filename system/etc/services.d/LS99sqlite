@@ -1,6 +1,9 @@
 #!/system/bin/sh
 
 LOGFILE=$1
+. /etc/init.d/googlewiz.sh
+
+LOGFILE=$1
 DAY=$( date +"%d" )
 CONTINUE=1
 
@@ -16,24 +19,24 @@ if [ $DAY -eq 27 ]; then CONTINUE=0; fi
 if [ $DAY -eq 30 ]; then CONTINUE=0; fi
 
 if [ ! $CONTINUE -eq 1 ]; then
-    echo "** $0 no need to run on day $DAY" | tee -a $LOGFILE
+    echo "** $0 no need to run on day $DAY" | $TEE $LOGFILE
     exit 0
 fi
 
-for i in $(find /data/dat* -iname "*.db"); do
-    /system/xbin/sqlite3 $i 'VACUUM;'
+for i in $($FIND /data/dat* -iname "*.db"); do
+    $SQLITE3 $i 'VACUUM;'
     resVac=$?
     if [ $resVac = 0 ]; then
         resVac="SUCCESS"
     else
         resVac="ERRCODE-$resVac"
     fi
-    /system/xbin/sqlite3 $i 'REINDEX;'
+    $SQLITE3 $i 'REINDEX;'
     resIndex=$?
     if [ $resIndex = 0 ]; then
         resIndex="SUCCESS"
     else
         resIndex="ERRCODE-$resIndex"
     fi
-    echo "-- DB: $i VACUUM=$resVac REINDEX=$resIndex" | tee -a $LOGFILE
+    echo "-- DB: $i VACUUM=$resVac REINDEX=$resIndex" | $TEE $LOGFILE
 done

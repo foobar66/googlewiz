@@ -1,30 +1,27 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
-
-BB=/system/xbin/busybox
 
 waitforsdcard $LOGFILE
 
 if [ -d /sdcard/mymusic ]; then
-    echo "-- trying to mount music partition" | tee -a $LOGFILE
+    echo "-- trying to mount music partition" | $TEE $LOGFILE
     $BB mount -t ext4 -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic
     if [ $? -ne 0 ]; then
-        echo "-- $BB mount -t ext4 -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic failed, trying something else" | tee -a $LOGFILE
+        echo "-- $BB mount -t ext4 -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic failed, trying something else" | $TEE $LOGFILE
         $BB mount -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic
         if [ $? -ne 0 ]; then
-            echo "-- $BB mount -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic failed as well" | tee -a $LOGFILE
+            echo "-- $BB mount -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic failed as well" | $TEE $LOGFILE
         else
-            echo "-- $BB mount -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic succeeded" | tee -a $LOGFILE
+            echo "-- $BB mount -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic succeeded" | $TEE $LOGFILE
         fi
     else
-        echo "-- $BB mount -t ext4 -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic succeeded" | tee -a $LOGFILE
+        echo "-- $BB mount -t ext4 -o rw,nosuid,noatime,nodiratime /dev/block/bootdevice/by-name/music /sdcard/mymusic succeeded" | $TEE $LOGFILE
     fi
 else
-    echo "-- /sdcard/mymusic does not exist, cannot mount /dev/block/bootdevice/by-name/music" | tee -a $LOGFILE
-    echo "-- creating directory and setting permissions (next boot should be fine)" | tee -a $LOGFILE
+    echo "-- /sdcard/mymusic does not exist, cannot mount /dev/block/bootdevice/by-name/music" | $TEE $LOGFILE
+    echo "-- creating directory and setting permissions (next boot should be fine)" | $TEE $LOGFILE
     $BB mkdir -p /sdcard/mymusic
     $BB touch /sdcard/mymusic/foo
     $BB chown -R 1023.1023 /sdcard/mymusic

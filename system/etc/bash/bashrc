@@ -31,4 +31,4 @@ export PAGER='less -X'
 alias ls='ls -Fs --color=auto'
 alias m='more'
 
-MOD=/sbin/.core/modules/googlewiz/system
+MOD=/sbin/.magisk/modules/googlewiz/system

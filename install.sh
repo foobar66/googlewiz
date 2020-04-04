@@ -86,7 +86,7 @@ on_install() {
     unzip -o "$ZIPFILE" 'system.prop' -d $MODPATH >&2
     ui_print "- Extracting file googlewiz"
     unzip -o "$ZIPFILE" 'googlewiz' -d $MODPATH >&2
-    ui_print "- creating symlinks in /system/bin"
+    ui_print "- Creating symlinks in /system/bin"
     # there are a few files in /system/bin where we make a link (overwrite) to /system/xbin
     # we make the symlinks here (making them in the module itself did not work, magisk?)
     for i in cmp fdisk find unzip; do
@@ -114,6 +114,40 @@ on_install() {
     else
         ui_print "- Apps are already part of module (no need to expand)"
     fi
+    CONFIG=/sdcard/googlewiz.config
+    if [ -f $CONFIG ]; then
+        ui_print "- Configuring Google apps"
+        /system/bin/toybox dos2unix $CONFIG
+        
+        while read -r line; do
+            ITEM=$(echo "$line" | sed 's/[=].*$//g')
+            VAL=$(echo "$line" | sed 's/.*[=]//g')
+            if [ "$VAL" = "0" ]; then
+                ui_print "- Removing Google $ITEM"
+                if [ "$ITEM" = "keep" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleKeep; fi
+                if [ "$ITEM" = "lens" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleLens; fi
+                if [ "$ITEM" = "news" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleNews; fi
+                if [ "$ITEM" = "translate" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleTranslate; fi
+                if [ "$ITEM" = "assistant" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleAssistant; fi
+                if [ "$ITEM" = "sheets" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleSheets; fi
+                if [ "$ITEM" = "snapseed" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleSnapseed; fi
+                if [ "$ITEM" = "street" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleStreet; fi
+                if [ "$ITEM" = "home" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleHome; fi
+                if [ "$ITEM" = "measure" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleMeasure; fi
+                if [ "$ITEM" = "fit" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleFit; fi
+                if [ "$ITEM" = "tasks" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleTasks; fi
+                if [ "$ITEM" = "earth" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleEarth; fi
+                if [ "$ITEM" = "slides" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleSlides; fi
+                if [ "$ITEM" = "clock" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleClock; fi
+                if [ "$ITEM" = "calculator" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleCalculator; fi
+                if [ "$ITEM" = "docs" ]; then rm -rf $MODPATH/system/vendor/app/MyGoogleDocs; fi
+            else
+                ui_print "- Not removing Google $ITEM"
+            fi
+        done < $CONFIG
+    else
+        ui_print "- No /sdcard/googlewiz.config file"
+    fi
 }
 
 # This function will be called after on_install is done
@@ -130,7 +164,7 @@ set_permissions() {
     set_perm_recursive $MODPATH/system/etc/init.d/ 0 0 0755 0755
     set_perm_recursive $MODPATH/system/etc/services.d/ 0 0 0755 0755
     # xbin (must be executable)
-    for i in androidauto apackages appc bash busybox cmp compall copyflash diff doperm dovl dss fdisk find freeze ftsc gdisk gset hl hm hs idiff ipk ksettings lcpu lz4 mkappsq oena parted pps rb rmovl rsync sqlite3 strace sysro sysrw unzip vacuum wellbeing xmlstarlet zip zipalign; do
+    for i in androidauto apackages appc bash busybox checkoverlays cmp compall copyflash diff doperm dovl dss fdisk find freeze ftsc gdisk gset hl hm hs idiff ipk ksettings lcpu lz4 mkappsq oena parted pps rb rmovl rsync sqlite3 strace sysro sysrw unzip vacuum wellbeing xmlstarlet zip zipalign; do
         set_perm $MODPATH/system/xbin/$i 0 0 0755
     done
     # bash

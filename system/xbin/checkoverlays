@@ -1,0 +1,14 @@
+#!/system/bin/sh
+
+CMD=/system/bin/cmd
+
+while [ 1 ]; do
+    for i in com.android.systemui.statusbars.PixelBlack com.android.systemui.tiles.PixelBlack overlay.tiles.QSTiles5Col4Rows; do
+        OVL=$($CMD overlay list | grep "$i" | awk '{print $1}')
+        if [ "$OVL" = "[" ]; then
+            cmd overlay enable "$i"
+        fi
+    done
+    # sleep 1 minute then check again
+    sleep 60
+done

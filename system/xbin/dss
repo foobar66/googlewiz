@@ -89,19 +89,18 @@ for i in $PLIST; do
     pm $CMD "$i/com.google.firebase.provider.FirebasePerfProvider" 2> /dev/null
 done
 
-pm $CMD "com.google.android.gms/.backup.BackupTransportService"
-pm $CMD "com.google.android.gms/.thunderbird.settings.ThunderbirdSettingInjectorService"
+pm $CMD "com.google.android.gms/.backup.BackupTransportService" 2> /dev/null
+pm $CMD "com.google.android.gms/.thunderbird.settings.ThunderbirdSettingInjectorService" 2> /dev/null
 
 if [ $# -eq 1 ]; then
     # disable instrumentation
-    pm $CMD "com.microsoft.office.excel/android.test.InstrumentationTestRunner"
-    pm $CMD "com.microsoft.office.word/android.test.InstrumentationTestRunner"
-    pm $CMD "com.microsoft.office.powerpoint/android.test.InstrumentationTestRunner"
+    pm $CMD "com.microsoft.office.excel/android.test.InstrumentationTestRunner" 2> /dev/null
+    pm $CMD "com.microsoft.office.word/android.test.InstrumentationTestRunner" 2> /dev/null
+    pm $CMD "com.microsoft.office.powerpoint/android.test.InstrumentationTestRunner" 2> /dev/null
 fi
 
-pm enable 'com.easymobile.lan.scanner/com.google.android.gms.ads.AdActivity'
-pm enable 'com.devhd.feedly/com.facebook.internal.FacebookInitProvider'
-pm enable 'com.arjanvlek.oxygenupdater/com.google.android.gms.ads.AdActivity'
-pm enable 'com.reader.androidworld3/com.google.android.gms.ads.AdActivity'
-pm enable 'com.aspiro.tidal/com.facebook.internal.FacebookInitProvider'
-
+pm enable 'com.easymobile.lan.scanner/com.google.android.gms.ads.AdActivity' 2> /dev/null
+pm enable 'com.devhd.feedly/com.facebook.internal.FacebookInitProvider' 2> /dev/null
+pm enable 'com.arjanvlek.oxygenupdater/com.google.android.gms.ads.AdActivity' 2> /dev/null
+pm enable 'com.reader.androidworld3/com.google.android.gms.ads.AdActivity' 2> /dev/null
+pm enable 'com.aspiro.tidal/com.facebook.internal.FacebookInitProvider' 2> /dev/null

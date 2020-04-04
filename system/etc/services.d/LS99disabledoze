@@ -1,6 +1,7 @@
 #!/system/bin/sh
 
 LOGFILE=$1
+. /etc/init.d/googlewiz.sh
 
-echo "-- disabling doze using dumpsys deviceidle disable" | tee -a $LOGFILE
-/system/bin/dumpsys deviceidle disable
+echo "-- disabling doze using dumpsys deviceidle disable" | $TEE $LOGFILE
+$DUMPSYS deviceidle disable

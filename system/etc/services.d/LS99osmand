@@ -1,7 +1,6 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 waitforsdcard $LOGFILE
@@ -9,7 +8,7 @@ waitforsdcard $LOGFILE
 # we have to wait a bit to make sure /sdcard/mymusic is mounted
 sleep 30
 
-echo "-- checking if osmand maps need to be copied" | tee -a $LOGFILE
+echo "-- checking if osmand maps need to be copied" | $TEE $LOGFILE
 
 SOURCE=/sdcard/mymusic
 MAP=Belgium_europe.obf
@@ -18,14 +17,14 @@ TARGET=/sdcard/Android/data/net.osmand/files/
 if [ -f $SOURCE/$MAP ]; then
     if [ -d $TARGET ]; then
         if [ ! -f $TARGET/$MAP ]; then
-            echo "-- copying $MAP from $SOURCE to $TARGET" | tee -a $LOGFILE
+            echo "-- copying $MAP from $SOURCE to $TARGET" | $TEE $LOGFILE
             cp $SOURCE/$MAP $TARGET
         else
-            echo "-- nothing to do, $TARGET/$MAP already exists" | tee -a $LOGFILE
+            echo "-- nothing to do, $TARGET/$MAP already exists" | $TEE $LOGFILE
         fi
     else
-        echo "-- nothing to do, $TARGET directory does not exist" | tee -a $LOGFILE
+        echo "-- nothing to do, $TARGET directory does not exist" | $TEE $LOGFILE
     fi
 else
-    echo "-- nothing to do, $SOURCE/$MAP does not exist" | tee -a $LOGFILE
+    echo "-- nothing to do, $SOURCE/$MAP does not exist" | $TEE $LOGFILE
 fi

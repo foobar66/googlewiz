@@ -3,30 +3,29 @@
 # does not work on Android Q
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
-if [ `getprop ro.build.version.sdk` -eq 29 ]; then
-    echo "-- we're on android 10, not running this script (does not seem to work always)" | tee -a $LOGFILE
+VER=$(getprop ro.build.version.sdk)
+
+echo "-- ro.build.version.sdk = $VER" | $TEE $LOGFILE
+
+if [ $VER -eq 29 ]; then
+    echo "-- we're on android 10, not running this script (does not seem to work always)" | $TEE $LOGFILE
     exit 0
 fi
 
 waitforsdcard $LOGFILE
 
-SP=/system/bin/setprop
-GP=/system/bin/getprop
-RP=/sbin/resetprop
-
 dosetprop() {
-    echo "-- property: $1 = $2" | tee -a $LOGFILE
-    $SP "$1" "$2"
+    echo "-- property: $1 = $2" | $TEE $LOGFILE
+    $SETPROP "$1" "$2"
 }
 
 doresetprop() {
-    VAL1=$($GP $1)
-    $RP "$1" "$2"
-    VAL2=$($GP $1)
-    echo "-- resetting property: $1 ($VAL1 => $VAL2)" | tee -a $LOGFILE    
+    VAL1=$($GETPROP $1)
+    $RESETPROP "$1" "$2"
+    VAL2=$($GETPROP $1)
+    echo "-- resetting property: $1 ($VAL1 => $VAL2)" | $TEE $LOGFILE    
 }
 
 dosetprop java.net.preferIPv6Addresses false

@@ -1,17 +1,16 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
 sleep 45
 
-echo "-- enabling core ctl" | tee -a $LOGFILE
+echo "-- enabling core ctl" | $TEE $LOGFILE
 sysset 1 /sys/devices/system/cpu/cpu0/core_ctl/enable
 sysset 1 /sys/devices/system/cpu/cpu4/core_ctl/enable
 sysset 1 /sys/devices/system/cpu/cpu7/core_ctl/enable
 
-echo "-- enabling min/max number of CPUs" | tee -a $LOGFILE
+echo "-- enabling min/max number of CPUs" | $TEE $LOGFILE
 sysset 4 /sys/devices/system/cpu/cpu0/core_ctl/min_cpus
 sysset 3 /sys/devices/system/cpu/cpu4/core_ctl/min_cpus
 sysset 1 /sys/devices/system/cpu/cpu7/core_ctl/min_cpus
@@ -19,17 +18,17 @@ sysset 4 /sys/devices/system/cpu/cpu0/core_ctl/max_cpus
 sysset 3 /sys/devices/system/cpu/cpu4/core_ctl/max_cpus
 sysset 1 /sys/devices/system/cpu/cpu7/core_ctl/max_cpus
 
-echo "-- disable schedutil pl" | tee -a $LOGFILE
+echo "-- disable schedutil pl" | $TEE $LOGFILE
 sysset 0 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/pl
 sysset 0 /sys/devices/system/cpu/cpu4/cpufreq/schedutil/pl
 sysset 0 /sys/devices/system/cpu/cpu7/cpufreq/schedutil/pl
 
-echo "-- set CPU task thresholds (all to max)" | tee -a $LOGFILE
+echo "-- set CPU task thresholds (all to max)" | $TEE $LOGFILE
 sysset 4294967295 /sys/devices/system/cpu/cpu0/core_ctl/task_thres
 sysset 4294967295 /sys/devices/system/cpu/cpu4/core_ctl/task_thres
 sysset 4294967295 /sys/devices/system/cpu/cpu7/core_ctl/task_thres
 
-echo "-- get min/max CPU frequencies" | tee -a $LOGFILE
+echo "-- get min/max CPU frequencies" | $TEE $LOGFILE
 MAXFREQ0=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq)
 MINFREQ0=$(cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_min_freq)
 
@@ -39,18 +38,15 @@ MINFREQ4=$(cat /sys/devices/system/cpu/cpu4/cpufreq/cpuinfo_min_freq)
 MAXFREQ7=$(cat /sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_max_freq)
 MINFREQ7=$(cat /sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_min_freq)
 
-echo "-- min CPU[0] = $MINFREQ0" | tee -a $LOGFILE
-echo "-- max CPU[0] = $MAXFREQ0" | tee -a $LOGFILE
-echo "-- min CPU[4] = $MINFREQ4" | tee -a $LOGFILE
-echo "-- max CPU[4] = $MAXFREQ4" | tee -a $LOGFILE
-echo "-- min CPU[7] = $MINFREQ7" | tee -a $LOGFILE
-echo "-- max CPU[7] = $MAXFREQ7" | tee -a $LOGFILE
+echo "-- min CPU[0] = $MINFREQ0, max CPU[0] = $MAXFREQ0" | $TEE $LOGFILE
+echo "-- min CPU[4] = $MINFREQ4, max CPU[4] = $MAXFREQ4" | $TEE $LOGFILE
+echo "-- min CPU[7] = $MINFREQ7, max CPU[7] = $MAXFREQ7" | $TEE $LOGFILE
 
 sysset $MAXFREQ0 /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_freq
 sysset $MAXFREQ4 /sys/devices/system/cpu/cpufreq/policy4/schedutil/hispeed_freq
 sysset $MAXFREQ7 /sys/devices/system/cpu/cpufreq/policy7/schedutil/hispeed_freq
 
-echo "-- set CPU up/down rate limit" | tee -a $LOGFILE
+echo "-- set CPU up/down rate limit" | $TEE $LOGFILE
 sysset 20000 /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
 sysset 00500 /sys/devices/system/cpu/cpufreq/policy0/schedutil/up_rate_limit_us	
 sysset 20000 /sys/devices/system/cpu/cpufreq/policy4/schedutil/down_rate_limit_us
@@ -58,20 +54,20 @@ sysset 00500 /sys/devices/system/cpu/cpufreq/policy4/schedutil/up_rate_limit_us
 sysset 20000 /sys/devices/system/cpu/cpufreq/policy7/schedutil/down_rate_limit_us
 sysset 00500 /sys/devices/system/cpu/cpufreq/policy7/schedutil/up_rate_limit_us	
 
-echo "-- set CPU hispeed load" | tee -a $LOGFILE
+echo "-- set CPU hispeed load" | $TEE $LOGFILE
 sysset 90 /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_load
 sysset 90 /sys/devices/system/cpu/cpufreq/policy4/schedutil/hispeed_load
 sysset 90 /sys/devices/system/cpu/cpufreq/policy7/schedutil/hispeed_load
 
-echo "-- setting min/max frequency for CPU cluster 0" | tee -a $LOGFILE
+echo "-- setting min/max frequency for CPU cluster 0" | $TEE $LOGFILE
 sysset $MAXFREQ0 /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
 sysset $MINFREQ0 /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
 
-echo "-- setting min/max frequency for CPU cluster 4" | tee -a $LOGFILE
+echo "-- setting min/max frequency for CPU cluster 4" | $TEE $LOGFILE
 sysset $MAXFREQ4 /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq
 sysset $MINFREQ4 /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
 
-echo "-- setting min/max frequency for CPU cluster 7" | tee -a $LOGFILE
+echo "-- setting min/max frequency for CPU cluster 7" | $TEE $LOGFILE
 sysset $MAXFREQ7 /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq
 sysset $MINFREQ7 /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq
 
@@ -84,10 +80,10 @@ sysset "0:$MAXFREQ0 1:$MAXFREQ0 2:$MAXFREQ0 3:$MAXFREQ0 4:$MAXFREQ4 5:$MAXFREQ4 
 #sysset 0-3 /dev/cpuset/restricted/cpus
 #sysset 0-3 /dev/cpuset/display/cpus
 
-echo "-- misc CPU settings" | tee -a $LOGFILE
-sysset Y /sys/module/control_center/parameters/cpu_boost_enable
-sysset Y /sys/module/control_center/parameters/ddr_boost_enable
-sysset Y /sys/module/control_center/parameters/ddr_lock_enable
-sysset Y /sys/module/houston/parameters/cpufreq_hispeed_enable
-sysset Y /sys/module/houston/parameters/ddrfreq_hispeed_enable
+echo "-- misc CPU settings" | $TEE $LOGFILE
+#sysset Y /sys/module/control_center/parameters/cpu_boost_enable
+#sysset Y /sys/module/control_center/parameters/ddr_boost_enable
+#sysset Y /sys/module/control_center/parameters/ddr_lock_enable
+#sysset Y /sys/module/houston/parameters/cpufreq_hispeed_enable
+#sysset Y /sys/module/houston/parameters/ddrfreq_hispeed_enable
 sysset Y /sys/module/houston/parameters/fps_boost_enable

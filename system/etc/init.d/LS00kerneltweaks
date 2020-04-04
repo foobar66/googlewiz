@@ -1,24 +1,37 @@
 #!/system/bin/sh
 
 LOGFILE=$1
-
 . /etc/init.d/googlewiz.sh
 
-echo "-- disabling debugging" | tee -a $LOGFILE
+echo "-- disabling debugging & logging" | $TEE $LOGFILE
+set_debug N always_kmsg_dump
 set_debug 0 debug
+set_debug 0 debug_dump_enable
+set_debug N debug_enabled
 set_debug 0 debug_level
 set_debug 0 debug_mask
+set_debug 0 dump_oops
 set_debug 0 edac_mc_log_ce
 set_debug 0 edac_mc_log_ue
 set_debug 0 enable_debug
+set_debug 0 enable_mini_ramdumps
 set_debug 0 enable_event_log
+set_debug 0 enable_ramdumps
+set_debug 0 initcall_debug
+set_debug 0 ipc_log_lvl
+set_debug 0 klog_lvl
+set_debug 0 log_ce
 set_debug 1 log_disable
 set_debug 0 log_ecn_error
 set_debug 0 log_lv
+set_debug 0 log_ue
+set_debug 0 rmnet_shs_debug
 set_debug 0 scsi_logging_level
 set_debug 0 snapshot_crashdumper
+set_debug 0 temp_debug
+set_debug 0 trace_level
 
-echo "-- changing kernel sysctl" | tee -a $LOGFILE
+echo "-- changing kernel sysctl" | $TEE $LOGFILE
 sysset 0 /proc/sys/debug/exception-trace
 sysset 0 /proc/sys/kernel/ctrl-alt-del
 sysset 0 /proc/sys/kernel/dmesg_restrict
@@ -33,9 +46,16 @@ sysset off /proc/sys/kernel/printk_devkmsg
 sysset 0 /proc/sys/kernel/randomize_va_space
 sysset 0 /proc/sys/kernel/sched_schedstats
 sysset 0 /sys/kernel/debug/debug_enabled
+sysset 0 /sys/kernel/debug/dri/0/debug/hw_log_mask
+sysset N /sys/module/printk/parameters/ignore_loglevel
+sysset 0 /sys/kernel/debug/tracing/options/trace_printk
+sysset N /sys/kernel/debug/camera_lrme/dump_register
+sysset N /sys/module/rcutree/parameters/dump_tree
+sysset 0 /sys/module/qpnp_power_on/parameters/long_pwr_dump_enabled
+sysset 0 /sys/module/qpnp_power_on/parameters/pwr_dump_enabled
+sysset 0 /sys/kernel/debug/ipa/enable_low_prio_print
 
-echo "-- changing vm sysctls" | tee -a $LOGFILE
-
+echo "-- changing vm sysctls" | $TEE $LOGFILE
 sysset 0 /proc/sys/vm/block_dump
 sysset 1 /proc/sys/vm/compact_memory
 sysset 1 /proc/sys/vm/compact_unevictable_allowed
@@ -56,13 +76,13 @@ sysset 0 /proc/sys/vm/stat_interval
 sysset 0 /proc/sys/vm/swappiness
 sysset 0 /proc/sys/vm/vfs_cache_pressure
 
-echo "-- changing module sysctl" | tee -a $LOGFILE
+echo "-- changing module sysctl" | $TEE $LOGFILE
 sysset N /sys/module/kernel/parameters/initcall_debug
 sysset Y /sys/module/printk/parameters/console_suspend
 sysset 0 /sys/module/subsystem_restart/parameters/enable_mini_ramdumps
 sysset 0 /sys/module/subsystem_restart/parameters/enable_ramdumps
 
-echo "-- disable misc debug in kernel" | tee -a $LOGFILE
+echo "-- disable misc debug in kernel" | $TEE $LOGFILE
 sysset N /sys/kernel/debug/debug_enabled
 sysset 0 /sys/kernel/debug/1d84000.ufshc/qcom/testbus/enable
 sysset 0 /sys/kernel/debug/msm_vidc/fw_debug_mode
@@ -73,7 +93,7 @@ sysset 0 /sys/kernel/debug/sde_rotator0/evtlog/enable
 sysset N /sys/kernel/debug/drm_dp/fec_feature_enable
 sysset N /sys/kernel/debug/drm_dp/dsc_feature_enable
 
-echo "-- applying scheduling tweaks" | tee -a $LOGFILE
+echo "-- applying scheduling tweaks" | $TEE $LOGFILE
 for i in /proc/sys/kernel; do
     echo 84 84 > $i/sched_downmigrate
     echo 95 > $i/sched_group_downmigrate
@@ -82,7 +102,7 @@ for i in /proc/sys/kernel; do
     echo 0 > $i/sched_walt_rotate_big_tasks
 done
 
-echo "-- miscellaneous kernel settings" | tee -a $LOGFILE
+echo "-- miscellaneous kernel settings" | $TEE $LOGFILE
 sysset Y /sys/module/bluetooth/parameters/disable_ertm
 sysset Y /sys/module/bluetooth/parameters/disable_esco
 sysset Y /sys/module/cryptomgr/parameters/notests
@@ -99,31 +119,30 @@ sysset N /sys/module/ppp_generic/parameters/mp_protocol_compress
 sysset 0 /sys/module/service_locator/parameters/enable
 sysset 25000 /sys/power/pm_freeze_timeout
 
-echo "-- disable kernel sleepers" | tee -a $LOGFILE
+echo "-- disable kernel sleepers" | $TEE $LOGFILE
 sysset NO_GENTLE_FAIR_SLEEPERS /sys/kernel/debug/sched_features
 
-echo "-- disable all tracing" | tee -a $LOGFILE
+echo "-- disable all tracing" | $TEE $LOGFILE
 sysset 0 /sys/kernel/debug/tracing/events/jbd2/jbd2_commit_logging/enable
 sysset 0 /sys/kernel/debug/tracing/events/sde/sde_evtlog/enable
-sysset 0 /sys/kernel/debug/tracing/instances/wifi/tracing_on
 sysset 0 /sys/kernel/debug/tracing/instances/wifi/tracing_on
 sysset 0 /sys/kernel/debug/tracing/tracing_on
 sysset 0 /sys/module/qpnp_power_on/parameters/long_pwr_dump_enabled
 sysset 0 /sys/module/qpnp_power_on/parameters/pwr_dump_enabled
 sysset 0 /sys/module/ramoops/parameters/dump_oops
 
-echo "-- changing file system sysctls" | tee -a $LOGFILE
+echo "-- changing file system sysctls" | $TEE $LOGFILE
 sysset 0 /proc/sys/fs/dir-notify-enable
 sysset 262144 /proc/sys/fs/file-max
 sysset 20 /proc/sys/fs/lease-break-time
 sysset 1 /proc/sys/fs/leases-enable
 
-echo "-- changing net.core sysctls" | tee -a $LOGFILE
+echo "-- changing net.core sysctls" | $TEE $LOGFILE
 sysset 8738000 /proc/sys/net/core/rmem_max
 sysset 6553600 /proc/sys/net/core/wmem_max
 sysset 0 /proc/sys/net/core/netdev_tstamp_prequeue
 
-echo "-- changing ipv4 sysctls" | tee -a $LOGFILE
+echo "-- changing ipv4 sysctls" | $TEE $LOGFILE
 sysset 0 /proc/sys/net/ipv4/cipso_cache_bucket_size
 sysset 0 /proc/sys/net/ipv4/cipso_cache_enable
 sysset 0 /proc/sys/net/ipv4/cipso_rbm_strictvalid
@@ -171,12 +190,12 @@ sysset 1 /proc/sys/net/ipv4/tcp_window_scaling
 sysset 6144 /proc/sys/net/ipv4/udp_rmem_min
 sysset 6144 /proc/sys/net/ipv4/udp_wmem_min
 
-echo "-- changing ipv6 sysctls" | tee -a $LOGFILE
+echo "-- changing ipv6 sysctls" | $TEE $LOGFILE
 sysset 0 /proc/sys/net/ipv6/calipso_cache_bucket_size
 sysset 0 /proc/sys/net/ipv6/calipso_cache_enable
 sysset 36 /proc/sys/net/ipv6/ip6frag_time
 sysset 1 /proc/sys/net/ipv6/route/flush
 
-echo "-- changing netfilter sysctls" | tee -a $LOGFILE
+echo "-- changing netfilter sysctls" | $TEE $LOGFILE
 sysset 1048576 /proc/sys/net/netfilter/nf_conntrack_max
 sysset 2 /proc/sys/net/netfilter/nf_conntrack_tcp_max_retrans

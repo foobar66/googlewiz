@@ -1,8 +1,9 @@
 #!/system/bin/sh
 
 LOGFILE=$1
+. /etc/init.d/googlewiz.sh
 
-echo "-- not running script $0 ... seems not needed" | tee -a $LOGFILE
+echo "-- not running script $0 ... seems not needed" | $TEE $LOGFILE
 exit 0
 
 
@@ -10,5 +11,5 @@ waitforsdcard $LOGFILE
 
 sleep 10
 
-echo "-- running update_verifier to signal successful boot" | tee -a $LOGFILE
+echo "-- running update_verifier to signal successful boot" | $TEE $LOGFILE
 /system/bin/update_verifier

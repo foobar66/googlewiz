@@ -3,14 +3,14 @@
 # the script is the first argument (full path)
 SCRIPT=$1
 # the logfile for the script is the basename
-LOGFILE="/data/`basename $SCRIPT`"
+LOGFILE="/data/$(basename $SCRIPT)"
 
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo "${RED}>> Starting $1 at $( date +"%Y%m%d-%H:%M:%S" )${NC}" | tee -a $LOGFILE
+echo "${RED}>> Starting $SCRIPT at $( date +"%Y%m%d-%H:%M:%S" )${NC}" | tee -a $LOGFILE
 
 # now we're going to execute the real thing (and expect that the $SCRIPT writes to the same logfile which is passed as argument
 $SCRIPT $LOGFILE
 
-echo "${RED}<< Ending $1 at $( date +"%Y%m%d-%H:%M:%S" )${NC}" | tee -a $LOGFILE
+echo "${RED}<< Ending $SCRIPT at $( date +"%Y%m%d-%H:%M:%S" )${NC}" | tee -a $LOGFILE

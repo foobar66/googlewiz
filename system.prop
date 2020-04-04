@@ -408,7 +408,8 @@ persist.vendor.audio.fluence.voicerec=true
 persist.vendor.audio_hal.dsp_bit_width_enforce_mode=24
 persist.vendor.audio_hal.period_size=192
 persist.vendor.camera.bokeh.front.debugmask=0
-persist.vendor.camera.debugdata.enableHdr10=1
+# note: setting Hdr10 to 1 makes the camera crash
+persist.vendor.camera.debugdata.enableHdr10=0
 persist.vendor.camera.eis.debug.mode=0
 persist.vendor.camera.googlelens.disable=0
 persist.vendor.camera.objecttracking.enableDebug=0
