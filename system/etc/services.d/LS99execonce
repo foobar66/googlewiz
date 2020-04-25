@@ -161,7 +161,6 @@ $SETTINGSPUT secure accessibility_enabled 0
 $SETTINGSPUT secure accessibility_shortcut_enabled 0
 $SETTINGSPUT secure advanced_reboot 1
 $SETTINGSPUT secure aod_clock_style 0
-$SETTINGSPUT secure aod_display_text 'Philip Rademakers'
 $SETTINGSPUT secure aware_enabled not_set
 $SETTINGSPUT secure aware_lock_enabled 0
 $SETTINGSPUT secure automatic_storage_manager_enabled 0
